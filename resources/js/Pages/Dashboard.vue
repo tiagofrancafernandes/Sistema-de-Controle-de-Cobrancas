@@ -1,14 +1,20 @@
 <script setup>
 import TailAdminLayout from '@/Layouts/TailAdminLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const pageTitle = computed(() => 'Dashboard');
+const pageSubtitle = computed(() => '');
+
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head :title="pageTitle" />
 
     <TailAdminLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight" v-text="pageTitle"></h2>
+            <h4 class=" leading-tight" v-text="pageSubtitle"></h4>
         </template>
 
         <div class="py-12">

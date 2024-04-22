@@ -12,6 +12,7 @@ import { createPinia } from 'pinia'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { Link } from '@inertiajs/vue3';
 import VueApexCharts from 'vue3-apexcharts'
+import AppExtra from '@/extra/plugins/AppExtra';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -21,6 +22,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(AppExtra)
             .use(createPinia())
             .use(VueApexCharts)
             .use(ZiggyVue)
