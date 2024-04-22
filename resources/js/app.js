@@ -1,10 +1,17 @@
 import './bootstrap';
 import '../css/app.css';
+import './assets/css/satoshi.css'
+import './assets/css/style.css'
+import 'jsvectormap/dist/css/jsvectormap.min.css'
+import 'flatpickr/dist/flatpickr.min.css'
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createPinia } from 'pinia'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { Link } from '@inertiajs/vue3';
+import VueApexCharts from 'vue3-apexcharts'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -14,7 +21,10 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(createPinia())
+            .use(VueApexCharts)
             .use(ZiggyVue)
+            .component('Link', Link)
             .mount(el);
     },
     progress: {
