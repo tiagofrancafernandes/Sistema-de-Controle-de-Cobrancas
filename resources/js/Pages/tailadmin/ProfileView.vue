@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BreadcrumbDefault from '@/Components/Breadcrumbs/BreadcrumbDefault.vue'
-import SettingsCard from '@/Components/SettingsCard.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import ProfileCard from '@/Components/ProfileCard.vue'
+import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 
-const pageTitle = ref('Settings Page')
+const pageTitle = ref('Profile')
 </script>
 
 <template>
-  <DefaultLayout>
-    <div class="mx-auto max-w-270">
+  <TailAdminLayout>
+    <div class="mx-auto max-w-242.5">
       <!-- Breadcrumb Start -->
       <BreadcrumbDefault :pageTitle="pageTitle" />
       <!-- Breadcrumb End -->
-      <SettingsCard />
+      <ProfileCard />
     </div>
-  </DefaultLayout>
+  </TailAdminLayout>
 </template>

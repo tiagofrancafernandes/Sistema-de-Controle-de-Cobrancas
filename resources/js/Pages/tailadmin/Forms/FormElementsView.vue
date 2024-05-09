@@ -12,7 +12,7 @@ import SwitchFour from '@/Components/Forms/Switchers/SwitchFour.vue'
 import SwitchOne from '@/Components/Forms/Switchers/SwitchOne.vue'
 import SwitchThree from '@/Components/Forms/Switchers/SwitchThree.vue'
 import SwitchTwo from '@/Components/Forms/Switchers/SwitchTwo.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 
 import { ref } from 'vue'
 import MultiSelect from '@/Components/Forms/MultiSelect.vue'
@@ -22,7 +22,7 @@ const pageTitle = ref('Form Elements')
 </script>
 
 <template>
-  <DefaultLayout>
+  <TailAdminLayout>
     <!-- Breadcrumb Start -->
     <BreadcrumbDefault :pageTitle="pageTitle" />
     <!-- Breadcrumb End -->
@@ -183,5 +183,5 @@ const pageTitle = ref('Form Elements')
       </div>
     </div>
     <!-- ====== Form Elements Section End -->
-  </DefaultLayout>
+  </TailAdminLayout>
 </template>

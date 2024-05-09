@@ -3,7 +3,7 @@ import BreadcrumbDefault from '@/Components/Breadcrumbs/BreadcrumbDefault.vue'
 import ChartOne from '@/Components/Charts/ChartOne.vue'
 import ChartThree from '@/Components/Charts/ChartThree.vue'
 import ChartTwo from '@/Components/Charts/ChartTwo.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 
 import { ref } from 'vue'
 
@@ -11,7 +11,7 @@ const pageTitle = ref('Basic Chart')
 </script>
 
 <template>
-  <DefaultLayout>
+  <TailAdminLayout>
     <!-- Breadcrumb Start -->
     <BreadcrumbDefault :pageTitle="pageTitle" />
     <!-- Breadcrumb End -->
@@ -29,5 +29,5 @@ const pageTitle = ref('Basic Chart')
       <ChartThree />
       <!-- ====== Chart Three End -->
     </div>
-  </DefaultLayout>
+  </TailAdminLayout>
 </template>

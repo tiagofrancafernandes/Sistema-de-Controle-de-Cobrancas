@@ -14,6 +14,34 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/tailadmin/{path}', function (string $path) {
+    $path = trim(substr($path, 0, str_ends_with($path, '-view') ? -5 : null), '/\\');
+    $path = trim(substr($path, 0, str_ends_with($path, 'View') ? -4 : null), '/\\');
+
+    $file = str($path)?->replace('//', '/')?->ltrim('/\\')?->rtrim('/\\')?->afterLast('/')?->append('View')?->studly();
+
+    $newPath = str(substr_count($path, '/') ? $path : '')
+        ?->ltrim('/\\')
+        ?->rtrim('/\\')
+        ?->beforeLast('/')
+        ?->append('/' . $file)
+        ?->prepend('tailadmin/')
+        ?->replace('//', '/')
+        ?->toString();
+
+    return Inertia::render($newPath, [
+        'path' => $path,
+        'newPath' => $newPath,
+    ]);
+})?->where('path', '.*')
+?->name('tailadmin_view');
+
+Route::get('/tables', function () {
+    return Inertia::render('tailadmin/TablesView', [
+        //
+    ]);
+})?->name('tables');
+
 Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

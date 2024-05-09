@@ -2,7 +2,7 @@
 import BreadcrumbDefault from '@/Components/Breadcrumbs/BreadcrumbDefault.vue'
 import ButtonDefault from '@/Components/Buttons/ButtonDefault.vue'
 import ButtonsCard from '@/Components/Buttons/ButtonsCard.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 
 import { ref } from 'vue'
 
@@ -10,7 +10,7 @@ const pageTitle = ref('Buttons')
 </script>
 
 <template>
-  <DefaultLayout>
+  <TailAdminLayout>
     <!-- Breadcrumb Start -->
     <BreadcrumbDefault :pageTitle="pageTitle" />
     <!-- Breadcrumb End -->
@@ -389,5 +389,5 @@ const pageTitle = ref('Buttons')
         </ButtonDefault>
       </div>
     </ButtonsCard>
-  </DefaultLayout>
+  </TailAdminLayout>
 </template>

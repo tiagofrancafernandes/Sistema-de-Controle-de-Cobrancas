@@ -6,11 +6,11 @@ import ChartTwo from '@/Components/Charts/ChartTwo.vue'
 import ChatCard from '@/Components/ChatCard.vue'
 import MapOne from '@/Components/Maps/MapOne.vue'
 import TableOne from '@/Components/Tables/TableOne.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 </script>
 
 <template>
-  <DefaultLayout>
+  <TailAdminLayout>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
       <DataStatsOne />
     </div>
@@ -42,5 +42,5 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
       <ChatCard />
       <!-- ====== Chat Card End -->
     </div>
-  </DefaultLayout>
+  </TailAdminLayout>
 </template>

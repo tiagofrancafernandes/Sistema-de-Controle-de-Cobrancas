@@ -3,14 +3,14 @@ import BreadcrumbDefault from '@/Components/Breadcrumbs/BreadcrumbDefault.vue'
 import DefaultCard from '@/Components/Forms/DefaultCard.vue'
 import InputGroup from '@/Components/Forms/InputGroup.vue'
 import SelectGroupTwo from '@/Components/Forms/SelectGroup/SelectGroupTwo.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 import { ref } from 'vue'
 
 const pageTitle = ref('Form Layout')
 </script>
 
 <template>
-  <DefaultLayout>
+  <TailAdminLayout>
     <!-- Breadcrumb Start -->
     <BreadcrumbDefault :pageTitle="pageTitle" />
     <!-- Breadcrumb End -->
@@ -177,5 +177,5 @@ const pageTitle = ref('Form Layout')
       </div>
     </div>
     <!-- ====== Form Layout Section End -->
-  </DefaultLayout>
+  </TailAdminLayout>
 </template>

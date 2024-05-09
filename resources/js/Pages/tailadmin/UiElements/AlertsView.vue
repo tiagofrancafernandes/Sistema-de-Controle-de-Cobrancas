@@ -3,7 +3,7 @@ import BreadcrumbDefault from '@/Components/Breadcrumbs/BreadcrumbDefault.vue'
 import AlertWarning from '@/Components/Alerts/AlertWarning.vue'
 import AlertSuccess from '@/Components/Alerts/AlertSuccess.vue'
 import AlertError from '@/Components/Alerts/AlertError.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 
 import { ref } from 'vue'
 
@@ -11,7 +11,7 @@ const pageTitle = ref('Alerts')
 </script>
 
 <template>
-  <DefaultLayout>
+  <TailAdminLayout>
     <!-- Breadcrumb Start -->
     <BreadcrumbDefault :pageTitle="pageTitle" />
     <!-- Breadcrumb End -->
@@ -33,5 +33,5 @@ const pageTitle = ref('Alerts')
         <!-- ====== AlertError End -->
       </div>
     </div>
-  </DefaultLayout>
+  </TailAdminLayout>
 </template>
