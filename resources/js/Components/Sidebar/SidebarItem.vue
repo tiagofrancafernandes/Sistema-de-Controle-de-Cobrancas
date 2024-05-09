@@ -12,16 +12,16 @@ const props = defineProps(['item', 'index'])
 const currentPage = computed(() => route().current)
 
 interface SidebarItem {
-  label: string
+    label: string
 }
 
 const handleItemClick = () => {
-  const pageName = sidebarStore.page === props.item.label ? '' : props.item.label
-  sidebarStore.page = pageName
+    const pageName = sidebarStore.page === props.item.label ? '' : props.item.label;
+    sidebarStore.page = pageName;
 
-  if (props.item.children) {
-    return props.item.children.some((child: SidebarItem) => sidebarStore.selected === child.label)
-  }
+    if (props.item.children) {
+        return props.item.children.some((child: SidebarItem) => sidebarStore.selected === child.label)
+    }
 }
 </script>
 
@@ -36,7 +36,8 @@ const handleItemClick = () => {
                 class="inline-flex items-center w-full text-white focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                 :class="{
                     'duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4': true,
-                    'bg-graydark dark:bg-meta-4': sidebarStore.page === item.label
+                    'bg-graydark dark:bg-meta-4': sidebarStore.page === item.label,
+                    'active': item.active,
                 }"
             >
                 <span v-if="item.icon" class="w-4 h-4 me-2" v-html="item.icon"></span>
@@ -96,11 +97,12 @@ const handleItemClick = () => {
                 class="group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
                 @click.prevent="handleItemClick"
                 :class="{
-                    'bg-graydark dark:bg-meta-4': sidebarStore.page === item.label
+                    'bg-graydark dark:bg-meta-4': sidebarStore.page === item.label,
+                    'bg-graydark dark:bg-meta-4': item.active,
+                    'active': item.active,
                 }"
             >
                 <span v-html="item.icon"></span>
-
                 {{ item.label }}
             </Link>
         </template>

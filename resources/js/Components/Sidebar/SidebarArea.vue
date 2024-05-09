@@ -48,7 +48,8 @@ const menuGroups = ref([
         children: [
             {
                 label: 'Geral',
-                href: route('dashboard')
+                href: route('dashboard'),
+                active: route().current('dashboard'),
             }
         ]
       },
@@ -72,6 +73,7 @@ const menuGroups = ref([
                 </svg>`,
         label: 'Profile',
         href: route('profile.edit'),
+        active: route().current('profile.edit'),
       },
       {
         icon: `<svg
