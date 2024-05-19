@@ -139,7 +139,6 @@ const menuGroups = ref([
             },
             {
                 label: 'Settings',
-                href: '/pages/settings',
                 href: route('tailadmin_view', '/pages/settings'),
                 active: route().current('tailadmin_view', '/pages/settings'),
             },
@@ -158,21 +157,18 @@ const menuGroups = ref([
                             />
                             </svg>`,
                 label: 'Calendar',
-                href: '/calendar',
                 href: route('tailadmin_view', '/calendar'),
                 active: route().current('tailadmin_view', '/calendar'),
             },
             {
                 label: 'Form Elements',
-                href: '/forms/form-elements',
-                href: route('tailadmin_view', '/forms/form-elements'),
-                active: route().current('tailadmin_view', '/forms/form-elements'),
+                href: route('tailadmin_view', '/Forms/FormElements'),
+                active: route().current('tailadmin_view', '/Forms/FormElements'),
             },
             {
                 label: 'Form Layout',
-                href: '/forms/form-layout',
-                href: route('tailadmin_view', '/forms/form-layout'),
-                active: route().current('tailadmin_view', '/forms/form-layout'),
+                href: route('tailadmin_view', '/Forms/Form-layout'),
+                active: route().current('tailadmin_view', '/Forms/Form-layout'),
             },
             {
                 icon: `<svg
@@ -200,7 +196,6 @@ const menuGroups = ref([
                         </defs>
                     </svg>`,
                 label: 'Basic Chart',
-                href: '/charts/basic-chart',
                 href: route('tailadmin_view', '/charts/basic-chart'),
                 active: route().current('tailadmin_view', '/charts/basic-chart'),
             },
@@ -234,7 +229,6 @@ const menuGroups = ref([
                         </defs>
                         </svg>`,
                 label: 'Alerts',
-                href: '/ui-elements/alerts',
                 href: route('tailadmin_view', '/ui-elements/alerts'),
                 active: route().current('tailadmin_view', '/ui-elements/alerts'),
             },
@@ -268,7 +262,6 @@ const menuGroups = ref([
                         </defs>
                         </svg>`,
                 label: 'Buttons',
-                href: '/ui-elements/buttons',
                 href: route('tailadmin_view', '/ui-elements/buttons'),
                 active: route().current('tailadmin_view', '/ui-elements/buttons'),
             },
@@ -298,9 +291,8 @@ const menuGroups = ref([
                         </defs>
                         </svg>`,
                 label: 'Auth Sign In',
-                href: '/auth/signin',
-                href: route('tailadmin_view', '/auth/signin'),
-                active: route().current('tailadmin_view', '/auth/signin'),
+                href: route('tailadmin_view', '/Authentication/Signin'),
+                active: route().current('tailadmin_view', '/Authentication/Signin'),
             },
             {
                 icon: `<svg
@@ -328,9 +320,8 @@ const menuGroups = ref([
                             </defs>
                         </svg>`,
                 label: 'Auth Sign Up',
-                href: '/auth/signup',
-                href: route('tailadmin_view', '/auth/signup'),
-                active: route().current('tailadmin_view', '/auth/signup'),
+                href: route('tailadmin_view', 'Authentication/Signup'),
+                active: route().current('tailadmin_view', 'Authentication/Signup'),
             },
         ],
       }
