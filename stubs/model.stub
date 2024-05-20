@@ -1,0 +1,41 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\ExtraUuids;
+
+class {{ class }} extends Model
+{
+    use HasFactory;
+    use ExtraUuids;
+
+    protected $fillable = [
+        //
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
+     * Get the columns that should receive a unique identifier.
+     *
+     * @return array
+     */
+    public function uniqueIds(): array
+    {
+        return [
+            'uuid',
+        ];
+    }
+}
