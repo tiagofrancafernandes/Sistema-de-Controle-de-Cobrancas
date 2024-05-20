@@ -10,6 +10,44 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\InvoiceStatus;
 use App\Enums\InvoiceOverdueNotifyCycle;
 
+/**
+ *
+ *
+ * @property int $id
+ * @property string $uuid
+ * @property string|null $recurrence_uuid
+ * @property InvoiceStatus $status
+ * @property string|null $extra_text
+ * @property float $amount
+ * @property \Illuminate\Support\Carbon $due_date
+ * @property \Illuminate\Support\Collection|null $notifiers
+ * @property InvoiceOverdueNotifyCycle $overdue_notify_cycle
+ * @property \Illuminate\Support\Collection|null $content_data
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\InvoiceFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereContentData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDueDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereExtraText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereNotifiers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereOverdueNotifyCycle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereRecurrenceUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Invoice extends Model
 {
     use HasFactory;
