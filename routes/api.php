@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\CustomerAuthController;
-use App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Api\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,5 +34,5 @@ Route::prefix('customers')?->name('customers.')->group(function () {
 });
 
 Route::prefix('tickets')?->name('tickets.')?->middleware('auth:sanctum')->group(function () {
-    Route::match(['get', 'post'], '/', [TicketController::class, 'index'])?->name('index');
+    Route::match(['get', 'post'], '/', [InvoiceController::class, 'index'])?->name('index');
 });

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\RecurrenceMode;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  *
@@ -75,5 +76,15 @@ class Recurrence extends Model
         return [
             'uuid',
         ];
+    }
+
+    /**
+     * Get the contract that owns the Invoice
+     *
+     * @return BelongsTo
+     */
+    public function contract(): BelongsTo
+    {
+        return $this->belongsTo(Contract::class, 'contract_uuid', 'uuid');
     }
 }

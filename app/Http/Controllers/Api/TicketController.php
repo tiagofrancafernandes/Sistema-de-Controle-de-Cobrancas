@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Ticket;
+use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class TicketController extends Controller
+class InvoiceController extends Controller
 {
     public function __construct()
     {
@@ -40,7 +40,7 @@ class TicketController extends Controller
         $orderBy = collect(['id', 'name'])?->contains($orderBy) ? $orderBy : 'id';
         $orderDirection = in_array(strtolower(strval($direction)), ['asc', 'desc']) ? $direction : 'desc';
 
-        $query = Ticket::byEmail($customerUser?->email ?? '')
+        $query = Invoice::byEmail($customerUser?->email ?? '')
                 ?->orderBy($orderBy, $orderDirection);
 
         $query = $query?->select([

@@ -13,7 +13,7 @@ return new class() extends Migration {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
             $table?->uuid('uuid')?->unique()?->index();
-            $table->uuid('customer_uuid')?->index()->unique();
+            $table->uuid('customer_uuid')?->index();
             $table->longText('content')->nullable();
             $table->timestamp('valid_from')?->nullable()?->index();
             $table->timestamp('valid_to')?->nullable()?->index();

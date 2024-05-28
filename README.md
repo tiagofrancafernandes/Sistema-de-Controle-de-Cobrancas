@@ -2,6 +2,11 @@
 
 -
 
+### Inspirações
+
+- https://www.psicomanager.com.br/
+
+
 ### Links
 
 - **[Tailadmin](https://vue-demo.tailadmin.com/)**

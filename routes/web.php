@@ -51,3 +51,10 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+Route::prefix('dev-partials')->group(function () {
+    Route::view('inline-component', 'dev-partials.inline-component', [
+        'view' => 'proposal-templates.fake.demo',
+        'data' => Database\Factories\ProposalFactory::fakeContentData(),
+    ]);
+});
