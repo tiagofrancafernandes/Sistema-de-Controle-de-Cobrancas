@@ -45,7 +45,9 @@ class Notification extends Model
         'to_sent_on',
         'was_sent_on',
         'notifier_uuid',
-        'customer_uuid',
+        'target_class',
+        'target_col_name',
+        'target_col_value',
         'data',
         'errors',
     ];
@@ -66,5 +68,25 @@ class Notification extends Model
         return [
             'uuid',
         ];
+    }
+
+    public function target(): ?Model
+    {
+        $targetClass = $this->{'target_class'} ?? null;
+        $targetColName = $this->{'target_col_name'} ?? null;
+        $targetColValue = $this->{'target_col_value'} ?? null;
+
+        if (
+            !filled($targetClass) ||
+            !filled($targetColName) ||
+            !filled($targetColValue) ||
+            !class_exists($targetClass) ||
+            !in_array(\Illuminate\Contracts\Queue\QueueableEntity::class, class_implements($targetClass)) ||
+            !in_array('query', get_class_methods($targetClass))
+        ) {
+            return null;
+        }
+
+        return call_user_func([$targetClass, 'where'], $targetColName, $targetColValue)->first() ?? null;
     }
 }

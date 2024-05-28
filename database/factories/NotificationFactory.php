@@ -22,7 +22,9 @@ class NotificationFactory extends Factory
             'to_sent_on' => null,
             'was_sent_on' => null,
             'notifier_uuid' => Notifier::factory()?->create()?->uuid,
-            'customer_uuid' => Customer::factory()?->create()?->uuid,
+            'target_class' => Customer::class,
+            'target_col_name' => 'uuid',
+            'target_col_value' => Customer::factory()?->create()?->uuid,
             'data' => null,
             'errors' => null,
         ];
