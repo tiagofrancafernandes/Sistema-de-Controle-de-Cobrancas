@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\InvoiceStatus;
 use App\Enums\InvoiceOverdueNotifyCycle;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  *
@@ -55,6 +56,7 @@ class Invoice extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'customer_uuid',
         'recurrence_uuid',
         'status',
         'extra_text',
@@ -84,5 +86,25 @@ class Invoice extends Model
         return [
             'uuid',
         ];
+    }
+
+    /**
+     * Get the customer that owns the Invoice
+     *
+     * @return BelongsTo
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class, 'customer_uuid', 'uuid');
+    }
+
+    /**
+     * Get the recurrence that owns the Invoice
+     *
+     * @return BelongsTo
+     */
+    public function recurrence(): BelongsTo
+    {
+        return $this->belongsTo(Recurrence::class, 'recurrence_uuid', 'uuid');
     }
 }

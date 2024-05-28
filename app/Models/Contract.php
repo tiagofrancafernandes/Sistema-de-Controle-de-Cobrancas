@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Enums\ContractFinishReason;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  *
@@ -87,5 +88,15 @@ class Contract extends Model
         return [
             'uuid',
         ];
+    }
+
+    /**
+     * Get the customer that owns the Invoice
+     *
+     * @return BelongsTo
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class, 'customer_uuid', 'uuid');
     }
 }

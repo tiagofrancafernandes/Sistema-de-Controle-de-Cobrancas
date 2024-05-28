@@ -4,12 +4,12 @@ namespace {{ namespace }};
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\ExtraUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class {{ class }} extends Model
 {
     use HasFactory;
-    use ExtraUuids;
+    use HasUuids;
 
     protected $fillable = [
         //

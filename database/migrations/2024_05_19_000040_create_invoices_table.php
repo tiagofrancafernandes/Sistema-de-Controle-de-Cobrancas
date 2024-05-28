@@ -13,6 +13,7 @@ return new class() extends Migration {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table?->uuid('uuid')?->unique()?->index();
+            $table->uuid('customer_uuid')->nullable()->index();
             $table->uuid('recurrence_uuid')->nullable()->index(); // If empty, is a single item
             $table->integer('status'); // Enum: paid|waiting 3rd|open|canceled
             $table->longText('extra_text')->nullable(); // Aditional text on SMZ, WA, invoice etc
@@ -23,6 +24,9 @@ return new class() extends Migration {
             $table->json('content_data')->nullable(); // Item|quantity|sum, discount, final total
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('customer_uuid')->references('uuid')
+                ->on('customers')->onDelete('cascade'); // cascade|set null
 
             $table->foreign('recurrence_uuid')->references('uuid')
                 ->on('recurrences')->onDelete('cascade'); // cascade|set null
