@@ -6,49 +6,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Traits\CustomBelongsToTenant;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-/**
- *
- *
- * @property int $id
- * @property string $name
- * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property mixed $password
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property string|null $uuid
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
- * @property-read int|null $notifications_count
- * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|User query()
- * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|User withoutTrashed()
- * @mixin \Eloquent
- */
+// use Stancl\Tenancy\Database\Concerns\CentralConnection;
+// use Stancl\Tenancy\Database\Concerns\TenantConnection;
+
 class User extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
-    use HasUuids;
-    use SoftDeletes;
+    // use CentralConnection;
+    // use TenantConnection;
+    use CustomBelongsToTenant;
 
     /**
      * The attributes that are mass assignable.
@@ -56,10 +26,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        // 'uuid',
         'name',
         'email',
         'password',
+        'tenant_id',
     ];
 
     /**
@@ -71,6 +41,15 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function getTable()
+    {
+        if (config('database.default') === 'sqlite') {
+            return parent::getTable();
+        }
+
+        return 'public.users';
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -86,14 +65,32 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the columns that should receive a unique identifier.
+     * Get the adminUser associated with the User
      *
-     * @return array
+     * @return HasOne
      */
-    public function uniqueIds(): array
+    public function adminUser(): HasOne
     {
-        return [
-            'uuid',
-        ];
+        if ($tenantId = $this->tenant_id) {
+            return $this->hasOne(AdminUser::class, 'user_id', 'id')
+                ->whereNotNull('tenant_id')
+                ->where('tenant_id', $tenantId);
+        }
+
+        return $this->hasOne(AdminUser::class, 'user_id', 'id')->whereNull('tenant_id');
+    }
+
+    public function superAdmin(): bool
+    {
+        /**
+         * @var AdminUser $adminUser
+         */
+        $adminUser = $this->adminUser ?? null;
+
+        if (!$adminUser) {
+            return false;
+        }
+
+        return is_null($adminUser?->tenant_id) && $adminUser?->isSuperAdmin();
     }
 }

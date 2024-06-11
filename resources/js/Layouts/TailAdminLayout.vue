@@ -4,6 +4,7 @@ import HeaderArea from '@/Components/Header/HeaderArea.vue';
 import Breadcrumb from '@/Components/Header/Breadcrumb.vue';
 import SidebarArea from '@/Components/Sidebar/SidebarArea.vue';
 import { computed } from "vue";
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
     breadcrumbItems: {
@@ -28,7 +29,7 @@ const props = defineProps({
 });
 
 const pageTitle = computed(() => {
-    return props.pageTitle || '';
+    return props.pageTitle || StringHelpers.toTitle((new URL(location.href)).pathname);
 });
 
 const pageSubtitle = computed(() => {
@@ -83,6 +84,8 @@ console.log('breadcrumbItems', breadcrumbItems.value);
 </script>
 
 <template>
+    <Head :title="pageTitle" />
+
     <!-- ===== Page Wrapper Start ===== -->
     <div class="flex h-screen overflow-hidden">
         <!-- ===== Sidebar Start ===== -->
@@ -102,7 +105,7 @@ console.log('breadcrumbItems', breadcrumbItems.value);
                 />
 
                 <div
-                    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+                    class="max-w-full mx-auto px-4 sm:px-6 lg:px-8"
                     :class="{
                         'py-6': pageTitle,
                         'py-8': !pageTitle,
@@ -113,7 +116,7 @@ console.log('breadcrumbItems', breadcrumbItems.value);
                 </div>
                 <template v-else>
                     <div
-                        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+                        class="max-w-full mx-auto px-4 sm:px-6 lg:px-8"
                         :class="{
                             'py-6': pageTitle,
                             'py-12': !pageTitle,
@@ -129,7 +132,7 @@ console.log('breadcrumbItems', breadcrumbItems.value);
 
             <!-- ===== Main Content Start ===== -->
             <main>
-            <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            <div class="mx-auto max-w-screen-7xl p-4 md:p-6 2xl:p-10">
                 <slot></slot>
             </div>
             </main>

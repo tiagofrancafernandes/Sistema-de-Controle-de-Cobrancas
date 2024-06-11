@@ -76,8 +76,7 @@ class ProfileTest extends TestCase
             ->assertRedirect('/');
 
         $this->assertGuest();
-        $user = $user->fresh();
-        $this->assertTrue(is_null($user) || !is_null($user?->deleted_at));
+        $this->assertNull($user->fresh());
     }
 
     public function testCorrectPasswordMustBeProvidedToDeleteAccount(): void
