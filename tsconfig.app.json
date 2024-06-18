@@ -4,7 +4,8 @@
         "env.d.ts",
         "./resources/js/**/*",
         "./resources/js/**/*.js",
-        "./resources/js/**/*.vue"
+        "./resources/js/**/*.vue",
+        "./resources/js/**/*.{js,vue,ts}"
     ],
     "exclude": [
         "src/**/__tests__/*",
@@ -14,7 +15,7 @@
     ],
     "compilerOptions": {
         "composite": true,
-        "noEmit": true,
+        "noEmit": false,
         "baseUrl": ".",
         "paths": {
             "@/*": [

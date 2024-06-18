@@ -9,15 +9,24 @@
         }
     ],
     "include": [
+        "./src/**/*",
         "env.d.ts",
         "./resources/js/**/*",
         "./resources/js/**/*.js",
-        "./resources/js/**/*.vue"
+        "./resources/js/**/*.vue",
+        "./resources/js/**/*.ts",
+        "./resources/js/**/*.{js,vue,ts}"
     ],
-    "compilerOptions": {
+      "compilerOptions": {
+        "module": "es2015",
+        "moduleResolution": "node",
+        "target": "es5",
+        "sourceMap": true,
+        "allowJs": true,
         "composite": true,
-        "noEmit": true,
+        "noEmit": false,
         "baseUrl": ".",
+        "lib": ["ES5", "DOM"],
         "paths": {
             "@/*": [
                 "./resources/js/*"
@@ -25,12 +34,16 @@
             "@resources/*": [
                 "./resources/*"
             ],
+            "@components/*": [
+                "./resources/js/Components/*"
+            ],
             "@public/*": [
                 "./public/*"
             ],
             "@asset/*": [
                 "./public/*"
             ],
+            "ziggy-js": ["./vendor/tightenco/ziggy"]
         },
     }
 }

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useDarkModeStore } from '@/stores/darkMode'
 
 const darkModeStore = useDarkModeStore()

@@ -2,9 +2,36 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@/*": ["resources/js/*"],
-            "ziggy-js": ["./vendor/tightenco/ziggy"]
-        }
+            "@/*": [
+                "./resources/js/*"
+            ],
+            "@resources/*": [
+                "./resources/*"
+            ],
+            "@public/*": [
+                "./public/*"
+            ],
+            "@asset/*": [
+                "./public/*"
+            ],
+            "@components/*": [
+                "./resources/js/Components/*"
+            ],
+            "ziggy-js": [
+                "./vendor/tightenco/ziggy"
+            ]
+        },
     },
-    "exclude": ["node_modules", "public"]
+    "exclude": [
+        "node_modules",
+        "public"
+    ],
+    "include": [
+        "./src/**/*",
+        "env.d.ts",
+        "./resources/js/**/*",
+        "./resources/js/**/*.js",
+        "resources/js/**/*.js",
+        "./resources/js/**/*.{js,vue,ts}"
+    ],
 }
