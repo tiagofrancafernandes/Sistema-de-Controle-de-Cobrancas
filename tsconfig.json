@@ -11,10 +11,7 @@
     "include": [
         "./src/**/*",
         "env.d.ts",
-        "./resources/js/**/*",
-        "./resources/js/**/*.js",
         "./resources/js/**/*.vue",
-        "./resources/js/**/*.ts",
         "./resources/js/**/*.{js,vue,ts}"
     ],
       "compilerOptions": {
@@ -36,6 +33,12 @@
             ],
             "@components/*": [
                 "./resources/js/Components/*"
+            ],
+            "@CRUD/*": [
+                "./resources/js/Pages/CRUD/*"
+            ],
+            "@EasyCrud/*": [
+                "./resources/js/EasyCrud/*"
             ],
             "@public/*": [
                 "./public/*"

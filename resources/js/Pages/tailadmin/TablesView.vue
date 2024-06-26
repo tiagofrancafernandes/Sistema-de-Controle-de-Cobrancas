@@ -4,6 +4,7 @@ import TableOne from '@/Components/Tables/TableOne.vue'
 import TableTwo from '@/Components/Tables/TableTwo.vue'
 import TableThree from '@/Components/Tables/TableThree.vue'
 import CustomTable from '@/Components/Tables/CustomTable.vue'
+import DivTable from '@/Components/Tables/DivTable.vue'
 // import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 import TailAdminLayout from '@/Layouts/TailAdminLayout.vue';
 
@@ -33,6 +34,7 @@ const breadcrumbItems = [
       <!-- <TableOne /> -->
       <!-- <TableTwo /> -->
       <TableThree />
+      <DivTable />
     </div>
   </TailAdminLayout>
 </template>

@@ -17,6 +17,15 @@
             "@components/*": [
                 "./resources/js/Components/*"
             ],
+            "@CRUD/*": [
+                "./resources/js/Pages/CRUD/*"
+            ],
+            "@SvgIcons/*": [
+                "./resources/js/SvgIcons/*"
+            ],
+            "@EasyCrud/*": [
+                "./resources/js/EasyCrud/*"
+            ],
             "ziggy-js": [
                 "./vendor/tightenco/ziggy"
             ]

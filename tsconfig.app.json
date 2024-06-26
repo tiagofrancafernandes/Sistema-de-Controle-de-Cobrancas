@@ -30,6 +30,12 @@
             "@asset/*": [
                 "./public/*"
             ],
+            "@CRUD/*": [
+                "./resources/js/Pages/CRUD/*"
+            ],
+            "@SvgIcons/*": [
+                "./resources/js/SvgIcons/*"
+            ],
         },
     }
 }

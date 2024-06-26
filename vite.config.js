@@ -33,6 +33,9 @@ export default defineConfig({
             '@resources': fileURLToPath(new URL('./resources', import.meta.url)),
             '@public': fileURLToPath(new URL('./public', import.meta.url)),
             '@asset': fileURLToPath(new URL('./public', import.meta.url)),
+            '@CRUD': fileURLToPath(new URL('./resources/js/Pages/CRUD', import.meta.url)),
+            '@SvgIcons': fileURLToPath(new URL('./resources/js/SvgIcons', import.meta.url)),
+            '@EasyCrud': fileURLToPath(new URL('./resources/js/EasyCrud', import.meta.url)),
         }
     }
 });

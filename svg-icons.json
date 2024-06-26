@@ -1,0 +1,28 @@
+{
+    "config": {
+        "prefix": "svg-icon-"
+    },
+    "meta": {
+        "generated_at": "2024-06-21T16:10:34+00:00",
+        "numbers": {
+            "components": 1,
+            "componentNames": 2
+        },
+        "icon_base_urls": [
+            "https://blade-ui-kit.com/blade-icons/%s"
+        ],
+        "authors": [
+            {
+                "name": "Tiago França",
+                "github": "https://github.com/tiagofrancafernandes",
+                "page": "https://tiagofranca.com"
+            }
+        ]
+    },
+    "icons": {
+        "ArrowDownCircle": "@SvgIcons/Icons/HeroiconSArrowDownCircle.vue",
+        "heroicon-s-arrow-down-circle": "@SvgIcons/Icons/heroicon-s-arrow-down-circle.vue",
+        "HeroiconSArrowDownCircle": "@SvgIcons/Icons/HeroiconSArrowDownCircle.vue",
+        "OpenedEyeIcon": "@SvgIcons/Icons/OpenedEyeIcon.vue"
+    }
+}
