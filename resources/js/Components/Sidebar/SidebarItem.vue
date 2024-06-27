@@ -15,13 +15,17 @@ interface SidebarItem {
     label: string
 }
 
-const handleItemClick = () => {
+const handleItemClick = (event) => {
     const pageName = sidebarStore.page === props.item.label ? '' : props.item.label;
     sidebarStore.page = pageName;
 
     if (props.item.children) {
         return props.item.children.some((child: SidebarItem) => sidebarStore.selected === child.label)
     }
+
+    console.log('handleItemClick event', event);
+
+    return event;
 }
 </script>
 
@@ -92,10 +96,13 @@ const handleItemClick = () => {
         <template
             v-else
         >
+        <!-- @click.prevent="handleItemClick" -->
+        <!-- as="a" -->
             <Link
-                :href="item.href"
+                :href="item.route ? route(item.route) : item.href"
+                v-bind:data-component-item="'SidebarItem'"
                 class="group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
-                @click.prevent="handleItemClick"
+
                 :class="{
                     'bg-graydark dark:bg-meta-4': sidebarStore.page === item.label,
                     'bg-graydark dark:bg-meta-4': item.active,

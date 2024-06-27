@@ -54,9 +54,10 @@ return Application::configure(basePath: dirname(__DIR__))
             });
 
             if (app()->environment(['local', 'dev'])) {
-                Route::name('dev.')
-                        ->prefix('dev')
-                        ->group(base_path('routes/dev/dev.php'));
+                Route::middleware(['web'])
+                    ->name('dev.')
+                    ->prefix('dev')
+                    ->group(base_path('routes/dev/dev.php'));
             }
         }
     )
