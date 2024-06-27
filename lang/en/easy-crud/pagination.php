@@ -2,7 +2,7 @@
 
 return [
     'previous' => 'Previous',
-    'previous_label' => '<< previous',
+    'previous_label' => '&laquo; previous',
     'next' => 'Next',
-    'next_label' => 'next >>',
+    'next_label' => 'Next &raquo;',
 ];

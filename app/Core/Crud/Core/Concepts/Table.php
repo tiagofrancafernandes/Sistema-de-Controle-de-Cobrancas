@@ -202,7 +202,6 @@ class Table
 
             'previousPage' => $previousPage > 0 ? $previousPage : null,
             'nextPage' => $nextPage <= $lastPage ? $nextPage : null,
-            'activePage' => ($pageCount ?: 1) === $tablePagination->getCurrentPage(),
             'firstPage' => 1,
             'lastPage' => $lastPage,
         ];
