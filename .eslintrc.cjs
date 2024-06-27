@@ -27,7 +27,7 @@ module.exports = {
         "vue/attribute-hyphenation": [
             "error", "always" | "never", {
             "ignore": [
-                // "custom-prop",
+                "custom-prop",
             ]
         }],
         // ...

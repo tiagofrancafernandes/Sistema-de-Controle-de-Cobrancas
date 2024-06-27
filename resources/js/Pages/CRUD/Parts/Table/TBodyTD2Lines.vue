@@ -1,5 +1,6 @@
 <script setup lang="js">
-import { computed, useSlots, useAttrs } from 'vue'
+import { computed, useSlots, useAttrs } from 'vue';
+import { dataGet, objectOnly, mergeObjects } from '@/Libs/Helpers/DataHelpers';
 
 const slots = useSlots();
 const attrs = useAttrs();
@@ -14,10 +15,10 @@ const props = defineProps([
 ])
 
 const propsAndAttrs = computed(() => {
-    return {
-        ...(attrs || {}),
-        ...(props || {}),
-    };
+    return mergeObjects(
+        props,
+        attrs,
+    );
 });
 
 const rowClasses = computed(() => {

@@ -3,19 +3,23 @@
 namespace App\Core\Crud\Core\Concepts;
 
 use Illuminate\Contracts\Support\Htmlable;
+use App\Helpers\EvaluateClosure;
 
 class TableColumn
 {
     protected null|\Closure|\Stringable|Htmlable|string $label = null;
+    protected null|\Closure|bool $replaceUsingPreparedContent = null;
     protected null|bool $translateLabel = null;
     protected string $key;
     protected null|\Closure|\Stringable|Htmlable|string $prepareContentUsing = null;
     protected null|\Closure|array $staticProps = null;
     protected null|\Closure|array $dynamicProps = null;
+    protected null|\Closure|array $columnHeaderAttributes = null;
+    protected null|\Closure|array $attributes = null;
     protected ?string $component = null;
 
     public function __construct(
-        ?string $key = null,
+        string $key,
         null|\Closure|\Stringable|Htmlable|string $label = null,
         null|bool $translateLabel = null,
         null|\Closure|\Stringable|Htmlable|string $prepareContentUsing = null,
@@ -30,7 +34,7 @@ class TableColumn
         }
 
         if (filled($translateLabel)) {
-            $this->setTranslateLabel($translateLabel);
+            $this->translateLabel($translateLabel);
         }
 
         if (filled($prepareContentUsing)) {
@@ -38,11 +42,11 @@ class TableColumn
         }
 
         if (filled($staticProps)) {
-            $this->setstaticProps($staticProps);
+            $this->staticProps($staticProps);
         }
 
         if (filled($dynamicProps)) {
-            $this->setdynamicProps($dynamicProps);
+            $this->dynamicProps($dynamicProps);
         }
 
         if (filled($component)) {
@@ -51,7 +55,7 @@ class TableColumn
     }
 
     public static function make(
-        ?string $key = null,
+        string $key,
         null|\Closure|\Stringable|Htmlable|string $label = null,
         null|\Closure|\Stringable|Htmlable|string $prepareContentUsing = null,
         null|bool $translateLabel = null,
@@ -70,9 +74,15 @@ class TableColumn
         );
     }
 
-    public function setKey(?string $key = null): static
+    public function setKey(string $key): static
     {
-        $this->key = $key;
+        $key = str($key)->trim()->replace(' ', '')->trim()->toString();
+
+        if (!filled($key)) {
+            throw new \Exception('"key" can\'t be empty!', 1);
+        }
+
+        $this->key = trim($key);
 
         return $this;
     }
@@ -89,7 +99,7 @@ class TableColumn
         $this->label = $label;
 
         if (filled($translateLabel)) {
-            $this->setTranslateLabel($translateLabel);
+            $this->translateLabel($translateLabel);
         }
 
         return $this;
@@ -97,12 +107,20 @@ class TableColumn
 
     public function getLabel(): string
     {
-        $label = StringHelpers::valueToString($this->label, $this) ?? str($this->getKey())->title()->toString();
+        $label = StringHelpers::valueToString($this->label, $this) ?? str($this->getKey())->headline()->toString();
 
         return $this->getTranslateLabel() ? __($label) : $label;
     }
 
-    public function setTranslateLabel(bool $translateLabel): static
+    /**
+     * @deprecated Use `translateLabel()` method instead
+     */
+    public function setTranslateLabel(bool $translateLabel = true): static
+    {
+        return $this->translateLabel($translateLabel);
+    }
+
+    public function translateLabel(bool $translateLabel = true): static
     {
         $this->translateLabel = $translateLabel;
 
@@ -114,11 +132,88 @@ class TableColumn
         return $this->translateLabel ?? false;
     }
 
-    public function prepareContentUsing(\Closure|\Stringable|Htmlable|string $prepareContentUsing): static
-    {
+    public function prepareContentUsing(
+        \Closure|\Stringable|Htmlable|string $prepareContentUsing,
+        null|\Closure|bool $replaceUsingPreparedContent = null,
+    ): static {
         $this->prepareContentUsing = $prepareContentUsing;
 
+        if (filled($replaceUsingPreparedContent)) {
+            $this->replaceUsingPreparedContent($replaceUsingPreparedContent);
+        }
+
         return $this;
+    }
+
+    public function hasPrepareContentUsing(): bool
+    {
+        return filled($this->prepareContentUsing);
+    }
+
+    public function replaceUsingPreparedContent(\Closure|bool $replaceUsingPreparedContent): static
+    {
+        $this->replaceUsingPreparedContent = $replaceUsingPreparedContent;
+
+        return $this;
+    }
+
+    public function toReplaceUsingPreparedContent(): bool
+    {
+        return EvaluateClosure::toBool($this->replaceUsingPreparedContent);
+    }
+
+    public function getColumnHeaderContent(): mixed
+    {
+        return $this->getLabel();
+    }
+
+    /**
+     * @deprecated Use `headerAttributes()` method instead
+     */
+    public function setColumnHeaderAttributes(null|\Closure|array $columnHeaderAttributes = null): static
+    {
+        return $this->headerAttributes($columnHeaderAttributes);
+    }
+
+    public function headerAttributes(null|\Closure|array $columnHeaderAttributes = null): static
+    {
+        $this->columnHeaderAttributes = $columnHeaderAttributes;
+
+        return $this;
+    }
+
+    public function getColumnHeaderAttributes(array $toMerge = []): mixed
+    {
+        return array_merge(EvaluateClosure::toArray($this->columnHeaderAttributes), $toMerge);
+    }
+
+    /**
+     * attributes function
+     *
+     * @param null|\Closure|array|null $attributes
+     * @return static
+     */
+    public function attributes(null|\Closure|array $attributes = null): static
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * setAttributes function
+     * @deprecated Use `attributes()` method instead
+     * @param null|\Closure|array|null $attributes
+     * @return static
+     */
+    public function setAttributes(null|\Closure|array $attributes = null): static
+    {
+        return $this->attributes($attributes);
+    }
+
+    public function getAttributes(array $toMerge = []): mixed
+    {
+        return array_merge(EvaluateClosure::toArray($this->attributes), $toMerge);
     }
 
     public function getColumnValue(
@@ -153,7 +248,15 @@ class TableColumn
         return StringHelpers::valueToString($this->prepareContentUsing, ...$params);
     }
 
+    /**
+     * @deprecated  Use `staticProps()` method instead
+     */
     public function setStaticProps(null|\Closure|array $staticProps = null): static
+    {
+        return $this->staticProps($staticProps);
+    }
+
+    public function staticProps(null|\Closure|array $staticProps = null): static
     {
         $this->staticProps = $staticProps;
 
@@ -162,18 +265,18 @@ class TableColumn
 
     public function getStaticProps(): array
     {
-        $staticProps = $this->staticProps;
-
-        if (!$staticProps || is_null($staticProps) || is_array($staticProps)) {
-            return $staticProps ?? [];
-        }
-
-        $staticProps = $staticProps();
-
-        return is_array($staticProps) ? $staticProps : [];
+        return EvaluateClosure::toArray($this->staticProps, $this);
     }
 
+    /**
+     * @deprecated  Use `dynamicProps()` method instead
+     */
     public function setDynamicProps(null|\Closure|array $dynamicProps = null): static
+    {
+        return $this->dynamicProps($dynamicProps);
+    }
+
+    public function dynamicProps(null|\Closure|array $dynamicProps = null): static
     {
         $this->dynamicProps = $dynamicProps;
 
@@ -197,8 +300,8 @@ class TableColumn
         null|\Closure|array $staticProps = null,
         null|\Closure|array $dynamicProps = null,
     ): static {
-        $this->setStaticProps($staticProps);
-        $this->setDynamicProps($dynamicProps);
+        $this->staticProps($staticProps);
+        $this->dynamicProps($dynamicProps);
 
         return $this;
     }
@@ -208,6 +311,10 @@ class TableColumn
         return [
             'staticProps' => $this->getStaticProps(),
             'dynamicProps' => $this->getDynamicProps(),
+            'headerProps' => [
+                'staticProps' => [], // TODO: $this->getColumnHeaderStaticProps(),
+                'dynamicProps' => [], // TODO: $this->getColumnHeaderDynamicProps(),
+            ],
         ];
     }
 

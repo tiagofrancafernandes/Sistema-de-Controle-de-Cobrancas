@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import * as DataHelpers from '@/Libs/Helpers/DataHelpers';
-import { dataGet, objectOnly } from '@/Libs/Helpers/DataHelpers';
+import { dataGet, objectOnly, mergeObjects } from '@/Libs/Helpers/DataHelpers';
 import { validClassMerge } from '@/Libs/Helpers/CssHelpers';
 import TableOne from '@/Components/Tables/TableOne.vue'
 import TableTwo from '@/Components/Tables/TableTwo.vue'
@@ -255,15 +255,34 @@ const getPropsAndAttributes = (record, columnData, defaultValue = null) => {
 
     let columnProps = getColumnProps(record, columnData);
     let columnAttributes = objectOnly(dataGet(columnData, 'attributes', defaultValue));
+    let recordKey = dataGet(columnData, 'key');
 
     if (columnProps && typeof columnProps === 'function') {
         columnProps = objectOnly(columnProps(record, columnData));
     }
 
-    return {
-        ...(columnAttributes || {}),
-        ...(columnProps || {}),
-    };
+    let merged = mergeObjects(
+        columnAttributes,
+        columnProps,
+    );
+
+    let contentAttrs = ['label', 'html', 'content'];
+    let currentContent = null;
+
+    for (let contentAttr of contentAttrs) {
+        currentContent = currentContent ?? ((contentAttr in merged) ? merged[contentAttr] : null);
+
+    }
+
+    if (currentContent === null) {
+        currentContent = recordKey !== null ? dataGet(record, recordKey) : null;
+
+        merged['content'] = merged['content'] || currentContent;
+        merged['label'] = merged['label'] || currentContent;
+        merged['html'] = merged['html'] || currentContent;
+    }
+
+    return merged;
 };
 </script>
 
@@ -352,8 +371,10 @@ const getPropsAndAttributes = (record, columnData, defaultValue = null) => {
                                             :class="validClassMerge(dataGet(col, 'classes', {}))"
                                             v-bind:sortable-component="dataGet(col, 'sortable')"
                                             v-bind:data-sortable-key="dataGet(col, 'sortableKey')"
-                                            v-html="recordContent(item, col)"
                                             v-bind="getPropsAndAttributes(item, col)"
+                                            alabel="'label'"
+                                            ahtml="'html'"
+                                            acontent="'content'"
                                         ></CrudTBodyTD>
                                     </template>
                                 </template>

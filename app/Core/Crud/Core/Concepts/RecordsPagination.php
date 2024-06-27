@@ -2,6 +2,9 @@
 
 namespace App\Core\Crud\Core\Concepts;
 
+use App\Helpers\EvaluateClosure;
+use Illuminate\Support\Arr;
+
 /**
  * @todo:
  * - last id/last page
@@ -20,6 +23,7 @@ class RecordsPagination
     protected null|\Closure|string|int $previousPage = null;
     protected null|\Closure|string|int $nextPage = null;
     protected null|\Closure|string|int $currentPage = null;
+    protected null|int|\Closure $pageCount = null;
     protected null|array $pageNumbers = null;
 
     public function __construct(
@@ -194,8 +198,146 @@ class RecordsPagination
         return $this;
     }
 
-    public function getPageNumbers(): null|array
+    public function pageCount(null|int|\Closure $pageCount = null): static
     {
-        return $this->pageNumbers;
+        $this->pageCount = $pageCount;
+
+        return $this;
+    }
+
+    public function getPageCount(): int
+    {
+        return filter_var(
+            EvaluateClosure::value($this->pageCount, [$this], 0),
+            FILTER_VALIDATE_INT,
+            FILTER_NULL_ON_FAILURE
+        );
+    }
+
+    public function getPageNumbers(): array
+    {
+        if (filled($this->pageNumbers)) {
+            return EvaluateClosure::toArray($this->pageNumbers, $this);
+        }
+
+        $pageCount = $this->getPageCount();
+
+        return $pageCount > 0 ? range(1, $pageCount) : [];
+    }
+
+    public function getLinks(array $pagesInfo = [], ?\Illuminate\Http\Request $request = null): array
+    {
+        $request ??= request();
+
+        $baseInfo = [
+            'baseUrl' => null,
+            'previousUrl' => null,
+            'previousLabel' => null,
+            'nextUrl' => null,
+            'nextLabel' => null,
+            'currentPage' => null,
+            'pageNumbers' => null,
+            'pageCount' => null,
+            'previousPage' => null,
+            'nextPage' => null,
+            'activePage' => null,
+            'firstPage' => null,
+            'lastPage' => null,
+        ];
+
+        $pagesInfo = fluent(
+            array_merge(
+                $baseInfo,
+                array_filter($pagesInfo, fn ($item) => !is_null($item)),
+            )
+        );
+
+        $links = [
+            'previous' => [
+                'label' => __('easy-crud/pagination.previous_label'),
+                'query' => null,
+                'link' => $pagesInfo?->previousUrl ?: null,
+            ],
+            'next' => [
+                'label' => __('easy-crud/pagination.next_label'),
+                'query' => null,
+                'link' => $pagesInfo?->nextUrl ?: null,
+            ],
+        ];
+
+        $baseUrl = $pagesInfo?->baseUrl ?: null;
+        $baseUrl = filter_var($baseUrl, FILTER_VALIDATE_URL, FILTER_NULL_ON_FAILURE);
+        $pageCount = (int) ($pagesInfo?->pageCount ?: 1);
+        $pageNumbers = array_filter(Arr::wrap($pagesInfo->pageNumbers ?: [1]), 'is_numeric');
+
+        $genLinkProps = fn (array $params) => array_merge(
+            [
+                'page' => null,
+                'per_page' => null,
+                'search' => null,
+                'filter' => [
+                    // ['id', 'eq', 4],
+                    // ['name', 'like', 'tiago'],
+                    // ...
+                ],
+            ],
+            $params,
+        );
+        // urldecode(http_build_query($linkProps))
+
+        $perPage = EvaluateClosure::toIntOrNull($request->input('per_page') || $request->input('perPage'));
+        $requestQuery = (array) ($request->query() ?: []);
+
+        $requestFilter = (array) ($request->input('filter') ?: []);
+        // $requestFilter = \App\Helpers\RequestHelpers\QueryFilter::getFilters($request);
+
+        foreach ($pageNumbers as $pageNumber) {
+            $linkProps = $genLinkProps(
+                array_merge(
+                    $requestQuery,
+                    [
+                        'page' => $pageNumber,
+                        'per_page' => $perPage,
+                        'filter' => $requestFilter,
+                    ],
+                )
+            );
+            $query = urldecode(http_build_query($linkProps));
+            $links[$pageNumber] = [
+                'label' => $pageNumber,
+                'query' => $query,
+                'link' => implode('?', array_filter([$baseUrl, $query])),
+            ];
+        }
+
+        $previousQuery = urldecode(http_build_query($genLinkProps(
+            array_merge(
+                $requestQuery,
+                [
+                    // 'page' => $pageNumber,
+                    'per_page' => $perPage,
+                    'filter' => $requestFilter,
+                ],
+            )
+        )));
+
+        $nextQuery = urldecode(http_build_query($genLinkProps(
+            array_merge(
+                $requestQuery,
+                [
+                    // 'page' => $pageNumber,
+                    'per_page' => $perPage,
+                    'filter' => $requestFilter,
+                ],
+            )
+        )));
+
+        $links['previous']['query'] = $previousQuery;
+        $links['previous']['link'] = implode('?', array_filter([$baseUrl, $previousQuery]));
+
+        $links['next']['query'] = $nextQuery;
+        $links['next']['link'] = implode('?', array_filter([$baseUrl, $nextQuery]));
+
+        return $links;
     }
 }

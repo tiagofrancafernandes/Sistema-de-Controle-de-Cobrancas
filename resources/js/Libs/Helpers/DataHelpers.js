@@ -65,3 +65,25 @@ export const getAsDate = (data, key, format = 'Date') => {
 export const getAsDateTime = (data, key, format = null) => {
     return getAsDate(data, key, format ?? 'datetime');
 }
+
+export const mergeObjects = (...items) => {
+    items = items.filter(item => typeof item === 'object' && !Array.isArray(item))
+        .map(item => {
+            return Object.fromEntries(Object.entries(item).filter(_item => {
+                let [key, value] = _item;
+
+                return value !== undefined ? [key, value] : false;
+            }))
+        });
+
+    let newObject = {};
+
+    for (let item of items) {
+        newObject = {
+            ...newObject,
+            ...item,
+        };
+    }
+
+    return newObject;
+}

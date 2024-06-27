@@ -4,6 +4,7 @@ namespace App\Core\Crud\Core\Concepts;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Arr;
 
 /*
 table
@@ -167,7 +168,7 @@ class Table
             ->map(fn (TableColumn $column) => $column->getKey());
     }
 
-    public function getPreparedContent(?Table $table = null)
+    public function getPreparedContent(?Table $table = null): \Illuminate\Support\Collection
     {
         /**
          * @var Table $table
@@ -180,7 +181,8 @@ class Table
         $tablePagination = $table->getRecordsPagination();
 
         $recordsCount = $table->getRecordsCount();
-        $pageCount = intval(ceil($recordsCount / $table->getRecordsLimit()));
+        $tablePagination->pageCount(intval(ceil($recordsCount / $table->getRecordsLimit())));
+        $pageCount = $tablePagination->getPageCount();
         $lastPage = $pageCount ?: 1;
         $nextPage = $tablePagination->getNextPage() ?? (
             $tablePagination->getCurrentPage() + 1
@@ -188,58 +190,97 @@ class Table
         $previousPage = $tablePagination->getPreviousPage() ?? (
             $tablePagination->getCurrentPage() - 1
         );
+        $pagesInfo = [
+            'baseUrl' => null,
+            'previousUrl' => $tablePagination->getPreviousUrl(),
+            'previousLabel' => $tablePagination->getPreviousLabel(),
+            'nextUrl' => $tablePagination->getNextUrl(),
+            'nextLabel' => $tablePagination->getNextLabel(),
+            'currentPage' => $tablePagination->getCurrentPage(),
+            'pageNumbers' => $tablePagination->getPageNumbers(),
+            'pageCount' => $pageCount,
+
+            'previousPage' => $previousPage > 0 ? $previousPage : null,
+            'nextPage' => $nextPage <= $lastPage ? $nextPage : null,
+            'activePage' => ($pageCount ?: 1) === $tablePagination->getCurrentPage(),
+            'firstPage' => 1,
+            'lastPage' => $lastPage,
+        ];
+
+        $links = $tablePagination->getLinks($pagesInfo, $table->getRequest()) ?: [];
+
         $preparedContent = [
+            'table' => [
+                'columns' => [],
+            ],
             'records' => [],
             'records_count' => $recordsCount,
             'pagination' => [
                 'show' => $tablePagination->getShow(),
                 'per_page' => $table->getRecordsLimit(),
                 'page_count' => $pageCount,
-                'links' => [
-                    'previousUrl' => $tablePagination->getPreviousUrl(),
-                    'previousLabel' => $tablePagination->getPreviousLabel(),
-                    'nextUrl' => $tablePagination->getNextUrl(),
-                    'nextLabel' => $tablePagination->getNextLabel(),
-                    'currentPage' => $tablePagination->getCurrentPage(),
-                    'pageNumbers' => $tablePagination->getPageNumbers() ?? $pageCount,
-
-                    'previousPage' => $previousPage > 0 ? $previousPage : null,
-                    'nextPage' => $nextPage <= $lastPage ? $nextPage : null,
-                    'activePage' => ($pageCount ?: 1) === $tablePagination->getCurrentPage(),
-                    'lastPage' => $lastPage,
-                ],
+                'info' => $pagesInfo,
+                'baseUrl' => $pagesInfo['baseUrl'] ?? null,
+                'links' => $links,
             ],
         ];
 
         foreach ($table->getRecords() as $record) {
             $recordPreparedContent = [];
+            $columnPreparedContent = [];
+            $recordData = $record?->toArray() ?? [];
             $table->getColumns()
-                ->each(function (TableColumn $column) use ($record, $table, &$recordPreparedContent) {
+                ->each(function (TableColumn $column) use ($record, $table, &$recordPreparedContent, &$columnPreparedContent, &$recordData) {
                     $key = $column?->getKey();
 
-                    $content = $column->getColumnValue($table, $record);
-                    $props = $column->getProps();
-                    $component = $column->getComponent();
+                    if ($column->hasPrepareContentUsing()) {
+                        $recordKeyPreparedContent = $column->getColumnValue($table, $record);
 
-                    $recordPreparedContent[] = [
+                        Arr::set(
+                            $recordData,
+                            $key,
+                            $column->toReplaceUsingPreparedContent()
+                            ? $recordKeyPreparedContent : ($recordData[$key] ?? $recordKeyPreparedContent)
+                        );
+                    }
+
+                    $dataComponent = null;// $column->getComponent();
+
+                    $preparedColumn = [
                         'key' => $key,
-                        'column' => [
-                            // 'column' => $column,
-                            'key' => $column->getKey(),
-                            'label' => $column->getLabel(),
-                            // 'content' => $content,
-                            'props' => $props,
-                            'component' => $component,
-                        ],
-                        'props' => $props,
-                        'content' => $content,
-                        'component' => $component,
+                        'label' => $column->getLabel(),
+                        'content' => $column->getColumnHeaderContent(),
+                        'headerAttributes' => $column->getColumnHeaderAttributes(),
+                        'attributes' => $column->getAttributes(),
+                        'classes' => [],
+                        'headerComponent' => null,
+                        'sortable' => false,
+                        'sortableKey' => $key, // TODO sortableKey
+                        'show' => true,
+                        'type' => 'content',
+                        'props' => $column->getProps(),
+                        'dataComponent' => $dataComponent, // dataComponent & headerComponent
                     ];
+
+                    $columnPreparedContent[] = $preparedColumn;
+
+                    // $recordPreparedContent[] = array_merge(
+                    //     $record?->toArray(),
+                    //     [
+                    //         'key' => $key,
+                    //         // 'column' => $preparedColumn,
+                    //         // 'props' => $props,
+                    //         'content' => $content,
+                    //         // 'dataComponent' => $dataComponent,
+                    //     ]
+                    // );
                 });
 
-            $preparedContent['records'][] = $recordPreparedContent;
+            // $preparedContent['records'][] = $recordPreparedContent;
+            $preparedContent['records'][] = $recordData;
+            $preparedContent['table']['columns'] = $columnPreparedContent;
         }
 
-        return $preparedContent;
+        return collect($preparedContent);
     }
 }

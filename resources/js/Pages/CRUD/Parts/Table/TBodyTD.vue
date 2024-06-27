@@ -1,25 +1,53 @@
 <script setup lang="js">
-import { computed } from 'vue';
+import { computed, useSlots, useAttrs } from 'vue';
+import { dataGet, objectOnly, mergeObjects } from '@/Libs/Helpers/DataHelpers';
+
+const slots = useSlots();
+const attrs = useAttrs();
+
 const props = defineProps([
     'label',
+    'html',
     'rowClasses',
     'contentClasses',
 ])
 
+const propsAndAttrs = computed(() => {
+    let merged = mergeObjects(
+        props,
+        attrs,
+    );
+
+    // console.clear();
+    // console.log('merged', merged);
+
+    return merged;
+});
+
 const rowClasses = computed(() => {
-    if (props?.rowClasses) {
-        return props?.rowClasses;
+    if (propsAndAttrs?.rowClasses) {
+        return propsAndAttrs?.rowClasses;
     }
 
     return 'py-1 px-3';
 })
 
 const contentClasses = computed(() => {
-    if (props?.contentClasses) {
-        return props?.contentClasses;
+    if (propsAndAttrs?.contentClasses) {
+        return propsAndAttrs?.contentClasses;
     }
 
     return 'text-black dark:text-white';
+})
+
+const htmlContent = computed(() => {
+    let htmlContent = propsAndAttrs?.html || attrs?.html || props?.html;
+
+    if (typeof htmlContent === 'string') {
+        return htmlContent;
+    }
+
+    return propsAndAttrs.content || propsAndAttrs.label;
 })
 </script>
 
@@ -27,6 +55,18 @@ const contentClasses = computed(() => {
 <td :class="rowClasses">
     <div
         :class="contentClasses"
-    ><slot></slot> {{ props.label }}</div>
+    >
+        <template v-if="htmlContent">
+            {{ htmlContent }}
+        </template>
+        <template v-else>
+            <template v-if="propsAndAttrs.content || propsAndAttrs.label">
+                {{ propsAndAttrs.content || propsAndAttrs.label }}
+            </template>
+            <template v-else>
+                <slot/>
+            </template>
+        </template>
+    </div>
 </td>
 </template>

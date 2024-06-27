@@ -24,34 +24,44 @@ class EvaluateClosure
 
     public static function toBool(mixed $toEvaluate, ...$args): bool
     {
-        $toEvaluate = is_a($toEvaluate, Closure::class) ? call_user_func($toEvaluate, ...$args) : $toEvaluate;
+        try {
+            if (!filled($toEvaluate)) {
+                return false;
+            }
 
-        if (is_bool($toEvaluate)) {
-            return $toEvaluate;
-        }
+            $toEvaluate = is_a($toEvaluate, Closure::class) ? call_user_func($toEvaluate, ...$args) : $toEvaluate;
 
-        if (
-            in_array($toEvaluate, [
-                0,
-                '',
-                '0',
-                false,
-                'false',
-                '!true',
-                'none',
-                'no',
-                'FALSE',
-                '!TRUE',
-                'NONE',
-                'NO'
-            ], true)
-        ) {
+            if (is_bool($toEvaluate)) {
+                return $toEvaluate;
+            }
+
+            if (
+                in_array($toEvaluate, [
+                    0,
+                    '',
+                    '0',
+                    false,
+                    'false',
+                    '!true',
+                    'none',
+                    'no',
+                    'FALSE',
+                    '!TRUE',
+                    'NONE',
+                    'NO'
+                ], true)
+            ) {
+                return false;
+            }
+
+            $toEvaluate = filter_var($toEvaluate, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+            return is_bool($toEvaluate) ? $toEvaluate : false;
+        } catch (\Throwable $th) {
+            //\Log::error($th);
+
             return false;
         }
-
-        $toEvaluate = filter_var($toEvaluate, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-
-        return is_bool($toEvaluate) ? $toEvaluate : false;
     }
 
     public static function toString(mixed $toEvaluate, ...$args): string
@@ -81,6 +91,30 @@ class EvaluateClosure
         }
 
         return call_user_func($toEvaluate, ...$args);
+    }
+
+    public static function value(mixed $toEvaluate, array $args = [], mixed $defaultValue = null): mixed
+    {
+        return static::evaluate($toEvaluate, ...$args) ?? $defaultValue;
+    }
+
+    public static function valueToInt(mixed $toEvaluate, array $args = [], ?int $defaultValue = null): ?int
+    {
+        return filter_var(
+            static::value($toEvaluate, $args),
+            FILTER_VALIDATE_INT,
+            FILTER_NULL_ON_FAILURE
+        ) ?? $defaultValue;
+    }
+
+    public static function toInt(mixed $toEvaluate, array $args = [], ?int $defaultValue = null): ?int
+    {
+        return (int) static::valueToInt($toEvaluate, $args, $defaultValue);
+    }
+
+    public static function toIntOrNull(mixed $toEvaluate, array $args = []): ?int
+    {
+        return static::valueToInt($toEvaluate, $args, null);
     }
 
     public static function isInstaceOf(mixed $value, ...$types): bool
