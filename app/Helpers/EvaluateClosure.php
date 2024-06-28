@@ -22,6 +22,29 @@ class EvaluateClosure
         return is_array($toEvaluate) ? $toEvaluate : [];
     }
 
+    public static function filteredItemsFromArray(null|array|Closure $toEvaluate, ...$args): array
+    {
+        $result = static::toArray($toEvaluate, ...$args);
+
+        return array_map(
+            fn ($item) => is_a($item, Closure::class) ? static::evaluate($item, ...$args) : $item,
+            array_filter(
+                $result,
+                fn ($item) => static::evaluate($item) || (is_a($item, Closure::class) && static::evaluate($item, ...$args))
+            )
+        );
+    }
+
+    public static function filteredClasses(null|array|Closure $toEvaluate, ...$args): array
+    {
+        return collect(static::filteredItemsFromArray($toEvaluate, ...$args))
+            ->mapWithKeys(fn ($value, $key) => [$key => in_array(gettype($value), ['array', 'string']) ? $value : $key])
+            ->values()
+            ->flatMap(fn ($item) => is_array($item) ? $item : [$item])
+            ->filter(fn ($item) => is_string($item) && trim($item))
+            ->toArray();
+    }
+
     public static function toBool(mixed $toEvaluate, ...$args): bool
     {
         try {
