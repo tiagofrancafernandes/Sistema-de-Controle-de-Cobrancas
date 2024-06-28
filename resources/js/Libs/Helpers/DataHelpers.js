@@ -5,8 +5,10 @@ import {
     asDate,
     formatDate,
 } from '@/Libs/Helpers/DateHelpers';
+import * as _DebounceThrottleHelpers from '@/Libs/Helpers/debounce-and-throttle';
 
 export const _radash = r;
+export const DebounceThrottleHelpers = _DebounceThrottleHelpers;
 
 export const objectOnly = (value) => typeof value === 'object' && !Array.isArray(value) ? value : {};
 
@@ -66,7 +68,12 @@ export const getAsDateTime = (data, key, format = null) => {
     return getAsDate(data, key, format ?? 'datetime');
 }
 
-export const mergeObjects = (...items) => {
+export const objectsAdvancedMerge = (items, config = {}) => {
+    config = objectOnly(config);
+    config['replace'] = Boolean(_get(config, 'replace', false));
+    let mergeUsing = _get(config, 'mergeUsing');
+
+    items = Array.isArray(items) ? items : [];
     items = items.filter(item => typeof item === 'object' && !Array.isArray(item))
         .map(item => {
             return Object.fromEntries(Object.entries(item).filter(_item => {
@@ -78,12 +85,29 @@ export const mergeObjects = (...items) => {
 
     let newObject = {};
 
+    mergeUsing = typeof mergeUsing === 'function' ? mergeUsing : (_item, _newObject, _config) => {
+        _item = objectOnly(_item);
+        _newObject = objectOnly(_newObject);
+        _config = objectOnly(_config);
+
+        return (_config['replace']) ? ({
+            ..._newObject,
+            ..._item,
+        }) : ({
+            ..._item,
+            ..._newObject,
+        });
+    }
+
     for (let item of items) {
-        newObject = {
-            ...newObject,
-            ...item,
-        };
+        newObject = objectOnly(mergeUsing(item, newObject, config));
     }
 
     return newObject;
+}
+
+export const mergeObjects = (...items) => {
+    return objectsAdvancedMerge(items, {
+        replace: false,
+    });
 }

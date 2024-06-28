@@ -231,11 +231,13 @@ Route::prefix('crud')->name('crud.')->group(function () {
             ];
 
             $table = new Table();
+            // rowClasses
             $table->columns([
                 TableColumn::make('id', 'ID', translateLabel: false),
-                // TableColumn::make('uuid'),
-                // TableColumn::make('email'),
-                TableColumn::make('email')->dynamicProps([
+                TableColumn::make('uuid'),
+                TableColumn::make('email'),
+                TableColumn::make('name'),
+                TableColumn::make('fake_date')->dynamicProps([
                     'label' => [
                         "callable" => "evalThis",
                         "params" => [
@@ -257,7 +259,12 @@ Route::prefix('crud')->name('crud.')->group(function () {
                 //     return $record?->created_at?->diffForHumans();
                 // }),
             ]);
-            $table->queryBuilder(User::query());
+            $table->queryBuilder(
+                User::query()->when(
+                    $request->string('search'),
+                    fn ($query, $search) => $query->where('name', 'ilike', "%{$search}%")
+                )
+            );
             $table->setRequest($request->merge([
                 //
             ]));

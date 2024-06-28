@@ -5,6 +5,7 @@ namespace App\Core\Crud\Core\Concepts;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Arr;
+use App\Helpers\EvaluateClosure;
 
 /*
 table
@@ -24,6 +25,15 @@ class Table
     protected ?\Illuminate\Http\Request $request = null;
     protected null|array|\Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Collection $staticRecords = null;
     protected null|EloquentBuilder|QueryBuilder $queryBuilder = null;
+    protected null|\Closure|array $theadConfig = null;
+    protected null|\Closure|array $tbodyConfig = null;
+    protected null|\Closure|array $tfootConfig = null;
+    protected null|array $theadRowClasses  = null;
+    protected null|array $tbodyRowClasses  = null;
+    protected null|array $tfootRowClasses  = null;
+    protected null|array $theadColClasses  = null;
+    protected null|array $tbodyColClasses  = null;
+    protected null|array $tfootColClasses  = null;
 
     public function __construct(
         array $columns = [],
@@ -168,6 +178,51 @@ class Table
             ->map(fn (TableColumn $column) => $column->getKey());
     }
 
+    public function theadConfig(null|\Closure|array $theadConfig = null): static
+    {
+        $this->theadConfig = $theadConfig;
+
+        return $this;
+    }
+
+    public function tbodyConfig(null|\Closure|array $tbodyConfig = null): static
+    {
+        $this->tbodyConfig = $tbodyConfig;
+
+        return $this;
+    }
+
+    public function tfootConfig(null|\Closure|array $tfootConfig = null): static
+    {
+        $this->tfootConfig = $tfootConfig;
+
+        return $this;
+    }
+
+    public function getTheadConfig(array $toMerge = []): array
+    {
+        $toMerge['rowClasses'] ??= EvaluateClosure::toArray($this->theadRowClasses, $this);
+        $toMerge['colClasses'] ??= EvaluateClosure::toArray($this->theadColClasses, $this);
+
+        return array_merge(EvaluateClosure::toArray($this->theadConfig, $this), $toMerge);
+    }
+
+    public function getTbodyConfig(array $toMerge = []): array
+    {
+        $toMerge['rowClasses'] ??= EvaluateClosure::toArray($this->tbodyRowClasses, $this);
+        $toMerge['colClasses'] ??= EvaluateClosure::toArray($this->tbodyColClasses, $this);
+
+        return array_merge(EvaluateClosure::toArray($this->tbodyConfig, $this), $toMerge);
+    }
+
+    public function getTfootConfig(array $toMerge = []): array
+    {
+        $toMerge['rowClasses'] ??= EvaluateClosure::toArray($this->tfootRowClasses, $this);
+        $toMerge['colClasses'] ??= EvaluateClosure::toArray($this->tfootColClasses, $this);
+
+        return array_merge(EvaluateClosure::toArray($this->tfootConfig, $this), $toMerge);
+    }
+
     public function getPreparedContent(?Table $table = null): \Illuminate\Support\Collection
     {
         /**
@@ -211,6 +266,16 @@ class Table
         $preparedContent = [
             'table' => [
                 'columns' => [],
+                'theadConfig' => $table->getTheadConfig(),
+                'tbodyConfig' => $table->getTbodyConfig([
+                    'rowClasses' => [
+                        'custom-tbody-row-class',
+                    ],
+                    'colClasses' => [
+                        'custom-tbody-col-class',
+                    ],
+                ]),
+                'tfootConfig' => $table->getTfootConfig(),
             ],
             'records' => [],
             'records_count' => $recordsCount,

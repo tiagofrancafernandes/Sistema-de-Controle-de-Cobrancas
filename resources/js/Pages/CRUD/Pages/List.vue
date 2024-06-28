@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { router } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 import * as DataHelpers from '@/Libs/Helpers/DataHelpers';
 import { dataGet, objectOnly, mergeObjects } from '@/Libs/Helpers/DataHelpers';
@@ -10,6 +11,8 @@ import CustomTable from '@/Components/Tables/CustomTable.vue'
 // import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 import TailAdminLayout from '@/Layouts/TailAdminLayout.vue';
 // import OpenedEyeIcon from '@/Components/Icons/OpenedEyeIcon.vue';
+
+import { debounce } from '@/Libs/Helpers/debounce-and-throttle';
 
 const emit = defineEmits(['update:checked']);
 
@@ -204,6 +207,17 @@ let icon = 'heroicon-s-arrow-down-circle';
 const tableColumns = computed(() => dataGet(pageData.value, 'table.columns'));
 const records = computed(() => dataGet(pageData.value, 'records'));
 
+const theadConfig = computed(() => objectOnly(dataGet(pageData.value, 'table.theadConfig')));
+const tbodyConfig = computed(() => objectOnly(dataGet(pageData.value, 'table.tbodyConfig')));
+const tfootConfig = computed(() => objectOnly(dataGet(pageData.value, 'table.tfootConfig')));
+const theadRowClasses = computed(() => dataGet(theadConfig.value, 'rowClasses'));
+const tbodyRowClasses = computed(() => dataGet(tbodyConfig.value, 'rowClasses'));
+const tfootRowClasses = computed(() => dataGet(tfootConfig.value, 'rowClasses'));
+
+const theadColClasses = computed(() => dataGet(theadConfig.value, 'colClasses'));
+const tbodyColClasses = computed(() => dataGet(tbodyConfig.value, 'colClasses'));
+const tfootColClasses = computed(() => dataGet(tfootConfig.value, 'colClasses'));
+
 const recordContent = (record, columnData, defaultValue = null) => {
     record = typeof record === 'object' ? record : null;
     columnData = typeof columnData === 'object' ? columnData : null;
@@ -244,17 +258,18 @@ const getColumnProps = (record, columnData) => {
     };
 }
 
-const getPropsAndAttributes = (record, columnData, defaultValue = null) => {
+const getPropsAndAttributes = (record, columnData, valuesToMerge = {}) => {
     record = objectOnly(record);
     columnData = objectOnly(columnData);
-    defaultValue = objectOnly(defaultValue);
+    valuesToMerge = objectOnly(valuesToMerge);
 
     if (!columnData || !record) {
-        return defaultValue;
+        return valuesToMerge;
     }
 
+    let classesToMerge = dataGet(valuesToMerge, 'class');
     let columnProps = getColumnProps(record, columnData);
-    let columnAttributes = objectOnly(dataGet(columnData, 'attributes', defaultValue));
+    let columnAttributes = objectOnly(dataGet(columnData, 'attributes', valuesToMerge));
     let recordKey = dataGet(columnData, 'key');
 
     if (columnProps && typeof columnProps === 'function') {
@@ -262,9 +277,22 @@ const getPropsAndAttributes = (record, columnData, defaultValue = null) => {
     }
 
     let merged = mergeObjects(
+        valuesToMerge,
         columnAttributes,
         columnProps,
     );
+
+    let allClasses = [
+        dataGet(valuesToMerge, 'class'),
+        dataGet(columnAttributes, 'class'),
+        dataGet(merged, 'class'),
+    ];
+
+    merged['class'] = validClassMerge(...allClasses);
+
+    if (!Object.keys(merged['class']).length) {
+        delete merged['class'];
+    }
 
     let contentAttrs = ['label', 'html', 'content'];
     let currentContent = null;
@@ -284,6 +312,38 @@ const getPropsAndAttributes = (record, columnData, defaultValue = null) => {
 
     return merged;
 };
+
+const getSearchParams = (key = null, defaultValue = null) => {
+    let searchParams = new URLSearchParams(location.search);
+
+    if (key === null) {
+        return searchParams;
+    }
+
+    key = typeof key === 'string' ? key : null;
+
+    if (key === null) {
+        return defaultValue;
+    }
+
+    return searchParams.get(key) ?? defaultValue;
+}
+
+let search = ref(getSearchParams('search'));
+
+const onChangeSearch = debounce((event) => {
+    console.log('changed value:', event?.target?.value, {event});
+    // call fetch API to get results
+
+    let searchValue = search.value;
+    let urlQuery = searchValue ? `?search=${search.value}` : '';
+    let url = `/dev/crud/index/v2${urlQuery}`;
+
+    router.visit(url, {
+        only: ['pageData'],
+        // except: ['pageData'],
+    });
+}, 500);
 </script>
 
 <template>
@@ -291,6 +351,21 @@ const getPropsAndAttributes = (record, columnData, defaultValue = null) => {
         :pageTitle="pageTitle"
         :breadcrumbItems="breadcrumbItems"
     >
+    <div class="w-full my-4">
+        <!-- <Link href="/users?active=true" :only="['users']">Show active</Link> -->
+        <Link href="/dev/crud/index/v2?search=beer" :only="['pageData']">Show search result</Link>
+
+        <div class="py-2">
+            <div :class="{'p-1': search, 'p-4': !search}">{{ search }}</div>
+            <input
+                type="search"
+                :placeholder="'Search'"
+                v-model.trim="search"
+                v-on:keyup="onChangeSearch"
+            >
+        </div>
+    </div>
+
     <div class="flex flex-col gap-10">
         <div
             class="rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
@@ -345,7 +420,10 @@ const getPropsAndAttributes = (record, columnData, defaultValue = null) => {
                     <tbody>
                         <tr
                             v-for="(item, index) in records" :key="index"
-                            class="border-t border-stroke dark:border-strokedark"
+                            :class="validClassMerge(
+                                ['border-t border-stroke dark:border-strokedark'],
+                                tbodyRowClasses,
+                            )"
                         >
                             <template
                                 v-for="(col, colIndex) in tableColumns"
@@ -354,27 +432,28 @@ const getPropsAndAttributes = (record, columnData, defaultValue = null) => {
                                 <template v-if="dataGet(col, 'show')">
                                     <template v-if="dataGet(col, 'dataComponent')">
                                         <component
-                                            :is="dataGet(col, 'dataComponent')"
-                                            v-bind="getPropsAndAttributes(item, col)"
                                             v-show="dataGet(col, 'show', true)"
-                                            :class="validClassMerge(
-                                                ['py-4 px-4 font-medium text-black dark:text-white'],
-                                                dataGet(col, 'classes'),
-                                            )"
-                                            v-bind:sortable-component="dataGet(col, 'sortable')"
-                                            v-bind:data-sortable-key="dataGet(col, 'sortableKey')"
+                                            :is="dataGet(col, 'dataComponent')"
+                                            v-bind="getPropsAndAttributes(item, col, {
+                                                abc: [123, 'pos1'],
+                                                aaclass: validClassMerge(
+                                                    ['py-4 px-4 font-medium text-black dark:text-white'],
+                                                    dataGet(col, 'classes'),
+                                                    tbodyColClasses,
+                                                ),
+                                            })"
                                         ></component>
                                     </template>
                                     <template v-else>
                                         <CrudTBodyTD
                                             v-show="dataGet(col, 'show', true)"
-                                            :class="validClassMerge(dataGet(col, 'classes', {}))"
-                                            v-bind:sortable-component="dataGet(col, 'sortable')"
-                                            v-bind:data-sortable-key="dataGet(col, 'sortableKey')"
-                                            v-bind="getPropsAndAttributes(item, col)"
-                                            alabel="'label'"
-                                            ahtml="'html'"
-                                            acontent="'content'"
+                                            v-bind="getPropsAndAttributes(item, col, {
+                                                abc: [123, 'pos2'],
+                                                class: validClassMerge(
+                                                    dataGet(col, 'classes', {}),
+                                                    tbodyColClasses,
+                                                ),
+                                            })"
                                         ></CrudTBodyTD>
                                     </template>
                                 </template>

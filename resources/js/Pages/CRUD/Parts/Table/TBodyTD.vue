@@ -25,23 +25,23 @@ const propsAndAttrs = computed(() => {
 });
 
 const rowClasses = computed(() => {
-    if (propsAndAttrs?.rowClasses) {
-        return propsAndAttrs?.rowClasses;
+    if (propsAndAttrs.value?.rowClasses) {
+        return propsAndAttrs.value?.rowClasses;
     }
 
     return 'py-1 px-3';
 })
 
 const contentClasses = computed(() => {
-    if (propsAndAttrs?.contentClasses) {
-        return propsAndAttrs?.contentClasses;
+    if (propsAndAttrs.value?.contentClasses) {
+        return propsAndAttrs.value?.contentClasses;
     }
 
-    return 'text-black dark:text-white';
+    return validClassMerge(propsAndAttrs.value?.class, 'text-black dark:text-white');
 })
 
 const htmlContent = computed(() => {
-    let htmlContent = propsAndAttrs?.html || attrs?.html || props?.html;
+    let htmlContent = propsAndAttrs.value?.html || attrs?.html || props?.html;
 
     if (typeof htmlContent === 'string') {
         return htmlContent;
