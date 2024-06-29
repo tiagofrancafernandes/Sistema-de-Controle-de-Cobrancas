@@ -80,11 +80,13 @@ export default {
         './index.html',
         './index.php',
         './public/index.php',
-        './src/**/*.{vue,js,ts,jsx,tsx}',
+        './src/**/*.{vue,js,ts,jsx,tsx,html}',
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-        './resources/js/**/*.{vue,js,ts,jsx,tsx}',
+        './resources/js/**/*.{vue,js,ts,jsx,tsx,html}',
+        './resources/js/EasyCrud/Components/**/*.{vue,js,ts,jsx,tsx,html}',
+        './resources/js/EasyCrud/Components/tw/overflow-html/*.html',
     ],
 
     theme: {

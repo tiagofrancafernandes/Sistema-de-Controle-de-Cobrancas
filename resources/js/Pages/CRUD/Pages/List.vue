@@ -101,7 +101,15 @@ const callables = {
             try {
                 let toEval = params[0] ?? null;
                 toEval = typeof toEval === 'string' ? toEval : null;
-                return toEval ? eval(toEval) : null;
+
+                if (toEval === null) {
+                    return null;
+                }
+
+                // return toEval ? eval(toEval) : null;
+
+                const toRun = new Function(toEval);
+                return toRun();
             } catch(error) {
                 return null;
             }

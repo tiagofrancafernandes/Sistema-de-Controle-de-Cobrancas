@@ -37,5 +37,14 @@ export default defineConfig({
             '@SvgIcons': fileURLToPath(new URL('./resources/js/SvgIcons', import.meta.url)),
             '@EasyCrud': fileURLToPath(new URL('./resources/js/EasyCrud', import.meta.url)),
         }
-    }
+    },
+    build: {
+        /**
+        * https://vitejs.dev/guide/build
+        * https://v3.vitejs.dev/guide/build.html
+        */
+        rollupOptions: {
+          // https://rollupjs.org/guide/en/#big-list-of-options
+        }
+    },
 });
