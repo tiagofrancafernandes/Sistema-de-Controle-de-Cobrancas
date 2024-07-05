@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use Spatie\Html\Html;
+use App\Core\Crud\Core\Concepts\StringHelpers;
 
 class EvaluateClosure
 {
@@ -47,9 +48,14 @@ class EvaluateClosure
 
     public static function toBool(mixed $toEvaluate, ...$args): bool
     {
+        return static::toBoolOrNull($toEvaluate, false, ...$args);
+    }
+
+    public static function toBoolOrNull(mixed $toEvaluate, null|bool $defaultValue = null, ...$args): ?bool
+    {
         try {
             if (!filled($toEvaluate)) {
-                return false;
+                return $defaultValue;
             }
 
             $toEvaluate = is_a($toEvaluate, Closure::class) ? call_user_func($toEvaluate, ...$args) : $toEvaluate;
@@ -79,11 +85,11 @@ class EvaluateClosure
 
             $toEvaluate = filter_var($toEvaluate, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-            return is_bool($toEvaluate) ? $toEvaluate : false;
+            return is_bool($toEvaluate) ? $toEvaluate : $defaultValue;
         } catch (\Throwable $th) {
             //\Log::error($th);
 
-            return false;
+            return $defaultValue;
         }
     }
 
@@ -172,6 +178,11 @@ class EvaluateClosure
                 Html::class,
             ]
         );
+    }
+
+    public static function valueToString(null|Closure|\Stringable|Htmlable|string $value = null, ...$args): ?string
+    {
+        return StringHelpers::valueToString($value, ...$args);
     }
 
     public static function objectToString(mixed $toEvaluate): string
