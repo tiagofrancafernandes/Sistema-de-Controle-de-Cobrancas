@@ -4,6 +4,7 @@ import { ref, computed } from 'vue'
 import * as DataHelpers from '@/Libs/Helpers/DataHelpers';
 import { dataGet, objectOnly, mergeObjects } from '@/Libs/Helpers/DataHelpers';
 import { validClassMerge } from '@/Libs/Helpers/CssHelpers';
+
 import TableOne from '@/Components/Tables/TableOne.vue'
 import TableTwo from '@/Components/Tables/TableTwo.vue'
 import TableThree from '@/Components/Tables/TableThree.vue'
@@ -11,8 +12,9 @@ import CustomTable from '@/Components/Tables/CustomTable.vue'
 // import TailAdminLayout from '@/Layouts/TailAdminLayout.vue'
 import TailAdminLayout from '@/Layouts/TailAdminLayout.vue';
 // import OpenedEyeIcon from '@/Components/Icons/OpenedEyeIcon.vue';
+// import CrudTBodyTD from '@CRUD/Parts/Table/TBodyTD.vue';
 
-import { debounce } from '@/Libs/Helpers/debounce-and-throttle';
+import FilterBlock from '@/EasyCrud/Components/CRUD/Parts/Filter/FilterBlock.vue';
 
 const emit = defineEmits(['update:checked']);
 
@@ -50,7 +52,6 @@ const pageConfig = computed(() => {
 const pageData = computed(() => {
     return pageConfig.value?.pageData;
 });
-
 
 const breadcrumbItems = [
     {
@@ -321,37 +322,70 @@ const getPropsAndAttributes = (record, columnData, valuesToMerge = {}) => {
     return merged;
 };
 
-const getSearchParams = (key = null, defaultValue = null) => {
-    let searchParams = new URLSearchParams(location.search);
+const filterConfig = computed(() => {
+    let pageFilterConfig = objectOnly(dataGet(pageData.value, 'filterConfig'));
 
-    if (key === null) {
-        return searchParams;
+    return {
+        ...pageFilterConfig,
+        // freeSearch: false, // false ou objeto
+        freeSearch: { // TODO: criar classe que implementa 'FreeSearchInputFilterContract'
+            show: true,
+        }, // false ou objeto
+    };
+
+    /*
+    return {
+        "resettable": true,
+        "show": true,
+        "freeSearch": false,
+        "submitOnChange": false,
+        "schema": [
+            {
+                "title": "Nome",
+                "inputType": "text",
+                "name": "name",
+                "colSpan": {
+                    "colSpan": "6",
+                    "colSpanMd": "4",
+                    "colSpanLg": "3"
+                },
+                "classes": {
+                    "colSpan": "col-span-6",
+                    "colSpanMd": "md:col-span-4",
+                    "colSpanLg": "lg:col-span-3"
+                },
+                "gridSize": 6,
+                "label": "Nome do usuário",
+                "value": null,
+                "component": "CrudFilterInputText"
+            }
+        ],
+        "gridSize": 6,
+        "submitFiltersButtonLabel": "Apply filters",
+        "resetFiltersButtonLabel": "Reset filters",
+        "showResetFiltersButton": true,
+        show: true,
+        // freeSearch: false, // false ou objeto
+        freeSearch: {
+            show: true,
+        }, // false ou objeto
+    };
+    */
+});
+
+// const records = computed(() => dataGet(pageData.value, 'records'));
+
+const showFilterBlock = computed(() => {
+    let _cfg = objectOnly(filterConfig.value);
+
+    if (!_cfg?.show) {
+        return false;
     }
 
-    key = typeof key === 'string' ? key : null;
+    let _schema = _cfg?.schema || [];
 
-    if (key === null) {
-        return defaultValue;
-    }
-
-    return searchParams.get(key) ?? defaultValue;
-}
-
-let search = ref(getSearchParams('search'));
-
-const onChangeSearch = debounce((event) => {
-    console.log('changed value:', event?.target?.value, {event});
-    // call fetch API to get results
-
-    let searchValue = search.value;
-    let urlQuery = searchValue ? `?search=${search.value}` : '';
-    let url = `/dev/crud/index/v2${urlQuery}`;
-
-    router.visit(url, {
-        only: ['pageData'],
-        // except: ['pageData'],
-    });
-}, 500);
+    return Array.isArray(_schema) && _schema.length;
+});
 </script>
 
 <template>
@@ -359,27 +393,31 @@ const onChangeSearch = debounce((event) => {
         :pageTitle="pageTitle"
         :breadcrumbItems="breadcrumbItems"
     >
-    <div class="w-full my-4">
-        <!-- <Link href="/users?active=true" :only="['users']">Show active</Link> -->
-        <Link href="/dev/crud/index/v2?search=beer" :only="['pageData']">Show search result</Link>
 
-        <div class="py-2">
-            <div :class="{'p-1': search, 'p-4': !search}">{{ search }}</div>
-            <input
-                type="search"
-                :placeholder="'Search'"
-                v-model.trim="search"
-                v-on:keyup="onChangeSearch"
-            >
-        </div>
-    </div>
+    <FilterBlock
+        :config="filterConfig"
+    />
 
     <div class="flex flex-col gap-10">
         <div
-            class="rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
+            :class="[
+                {
+                    'rounded-none': showFilterBlock,
+                    'rounded-t-lg': !showFilterBlock,
+                } ,
+                'border border-gray-200 bg-white shadow-default dark:border-gray-700 dark:bg-gray-800'
+            ]"
         >
-            <div class="rounded-lg max-w-full overflow-x-auto">
-                <table class="w-full table-auto">
+            <div
+                :class="[
+                    {
+                        'rounded-none': showFilterBlock,
+                        'rounded-t-lg': !showFilterBlock,
+                    } ,
+                    'relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10',
+                ]"
+            >
+                <table class="w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5">
                     <thead>
                         <tr class="bg-gray-2 text-left dark:bg-meta-4">
                             <template

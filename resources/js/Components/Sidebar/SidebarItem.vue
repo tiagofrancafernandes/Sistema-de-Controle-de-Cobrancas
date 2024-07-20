@@ -37,7 +37,7 @@ const handleItemClick = (event) => {
             <button
                 type="button"
                 @click.prevent="handleItemClick"
-                class="inline-flex items-center w-full text-white focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                class="inline-flex items-center w-full text-white focus:outline-none font-light rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                 :class="{
                     'duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4': true,
                     'bg-graydark dark:bg-meta-4': sidebarStore.page === item.label,
@@ -65,7 +65,7 @@ const handleItemClick = (event) => {
 
             <!-- <button
                 type="button"
-                class="group relative text-center inline-flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                class="group relative text-center inline-flex items-center gap-2.5 rounded-lg py-2 px-4 font-light text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
                 @click.prevent="handleItemClick"
                 :class="{
                     'bg-graydark dark:bg-meta-4': sidebarStore.page === item.label
@@ -101,7 +101,7 @@ const handleItemClick = (event) => {
             <Link
                 :href="item.route ? route(item.route) : item.href"
                 v-bind:data-component-item="'SidebarItem'"
-                class="group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                class="group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-light text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
 
                 :class="{
                     'bg-graydark dark:bg-meta-4': (sidebarStore.page === item.label || item.active),

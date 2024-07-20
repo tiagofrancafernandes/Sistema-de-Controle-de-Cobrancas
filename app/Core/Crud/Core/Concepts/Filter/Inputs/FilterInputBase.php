@@ -249,7 +249,7 @@ abstract class FilterInputBase implements FilterInputInterface
     {
         $result = EvaluateClosure::evaluate($this->gridSize, $this);
 
-        return is_a($result, GridSizeEnum::class) ? $result : GridSizeEnum::TWELVE;
+        return is_a($result, GridSizeEnum::class) ? $result : GridSizeEnum::SIX;
     }
 
     public function __toString(): string
@@ -319,6 +319,7 @@ abstract class FilterInputBase implements FilterInputInterface
             'gridSize' => $this->getGridSize(),
             'label' => $this->getLabel(),
             'value' => $this->getValue(),
+            'component' => $this->getComponent(),
         ];
     }
 
@@ -336,10 +337,13 @@ abstract class FilterInputBase implements FilterInputInterface
             'gridSize' => $this->getGridSize(),
             'label' => $this->getLabel(),
             'value' => $this->getValue(),
+            'component' => $this->getComponent(),
         ];
 
         return $replace ? array_merge($props(), $extraProps) : array_merge($extraProps, $props());
     }
+
+    abstract public function getComponent(): string;
 
     /*
     - title

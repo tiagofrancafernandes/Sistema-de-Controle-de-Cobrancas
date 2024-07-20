@@ -7,10 +7,19 @@ use App\Core\Crud\Core\Concepts\Table;
 use App\Core\Crud\Core\Concepts\TableColumn;
 use Illuminate\Support\Fluent;
 use Illuminate\Http\Request;
+use App\Core\Crud\Core\Concepts\Filter\Filter;
+use App\Core\Crud\Core\Concepts\Filter\Inputs\FilterInputText;
+use App\Core\Crud\Core\Concepts\Layout\Grid\Enums\ColSpanSizeEnum;
+use App\Core\Crud\Core\Concepts\Layout\Grid\Enums\GridSizeEnum;
 
 // use Illuminate\Foundation\Application;
 
 Route::prefix('crud')->name('crud.')->group(function () {
+    Route::get(
+        '/demo',
+        fn () => Inertia::render('CRUD/Pages/Demo'),
+    )->name('demo.index');
+
     Route::get(
         '/index',
         fn () => Inertia::render(
@@ -230,7 +239,31 @@ Route::prefix('crud')->name('crud.')->group(function () {
                 'records' => User::limit(3)->get(),
             ];
 
+            $filter = new Filter(
+                resettable: true,
+                submitOnChange: false,
+                show: true,
+                // freeSearch: ,
+                gridSize: GridSizeEnum::SIX,
+                schema: [
+                    FilterInputText::make(
+                        name: 'name',
+                        title: 'Nome',
+                        label: 'Nome do usuário',
+                        colSpan: [
+                            ColSpanSizeEnum::FULL,
+                            ColSpanSizeEnum::FOUR,
+                            ColSpanSizeEnum::THREE,
+                        ]
+                    ),
+                ],
+                // submitFiltersButtonLabel: ,
+                // resetFiltersButtonLabel: ,
+                // showResetFiltersButton: ,
+            );
+
             $table = new Table();
+            $table->filterConfig($filter);
             // rowClasses
             $table->columns([
                 TableColumn::make('id', 'ID', translateLabel: false),

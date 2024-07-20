@@ -74,8 +74,8 @@ let filteredColors = {
 /** @type {import('tailwindcss').Config} */
 export default {
     // darkMode: 'class',
-    // darkMode: 'media',
-    darkMode: 'class', // Use the toggle button to change
+    darkMode: 'media',
+    // darkMode: 'class', // Use the toggle button to change
     content: [
         './index.html',
         './index.php',
@@ -93,7 +93,8 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-                satoshi: ['Satoshi', 'sans-serif']
+                satoshi: ['Satoshi', 'sans-serif'],
+                mono: [...defaultTheme.fontFamily.mono],
             },
             screens: {
               '2xsm': '375px',

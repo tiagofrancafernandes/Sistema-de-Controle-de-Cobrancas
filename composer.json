@@ -12,6 +12,7 @@
         "laravel/tinker": "^2.9",
         "spatie/laravel-html": "^3.9",
         "stancl/tenancy": "^3.8",
+        "tiagof2/f2-front-helpers": "^0.0.01",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

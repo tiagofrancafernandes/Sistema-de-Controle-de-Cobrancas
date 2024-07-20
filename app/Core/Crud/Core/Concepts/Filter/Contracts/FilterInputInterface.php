@@ -38,6 +38,7 @@ interface FilterInputInterface extends AsPropsContracts, JsonSerializable, Jsona
     public function toArray(): array;
     public function gridSize(GridSizeEnum $gridSize): static;
     public function getGridSize(): null|GridSizeEnum;
+    public function getComponent(): string;
 
     // [items]
     // [options] FilterSelectInterface

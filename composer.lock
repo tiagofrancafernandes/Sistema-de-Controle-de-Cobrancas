@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ae3e2e386f26cfe1cba0ec5c9b0c0a3d",
+    "content-hash": "4a426f0f57e33c01307a419af912dc46",
     "packages": [
         {
             "name": "brick/math",
@@ -5851,6 +5851,61 @@
                 }
             ],
             "time": "2024-05-31T14:57:53+00:00"
+        },
+        {
+            "name": "tiagof2/f2-front-helpers",
+            "version": "v0.0.01",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tiagofrancafernandes/f2-front-helpers.git",
+                "reference": "e4af5972c356774e7df4f1cada8d0abb9bb119f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tiagofrancafernandes/f2-front-helpers/zipball/e4af5972c356774e7df4f1cada8d0abb9bb119f3",
+                "reference": "e4af5972c356774e7df4f1cada8d0abb9bb119f3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "extra": {
+                "tiagof2": {
+                    "modules": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TiagoF2\\FrontHelpers\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tiago França",
+                    "email": "dev+composer@tiagofranca.com"
+                }
+            ],
+            "description": "A package for your front use",
+            "homepage": "https://tiagofranca.com",
+            "keywords": [
+                "classes",
+                "frontend",
+                "helpers",
+                "javascript",
+                "laravel",
+                "tiagof2",
+                "tools"
+            ],
+            "support": {
+                "issues": "https://github.com/tiagofrancafernandes/f2-front-helpers/issues",
+                "source": "https://github.com/tiagofrancafernandes/f2-front-helpers/tree/v0.0.01"
+            },
+            "time": "2024-07-19T18:28:04+00:00"
         },
         {
             "name": "tightenco/ziggy",

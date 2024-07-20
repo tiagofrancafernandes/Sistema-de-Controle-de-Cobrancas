@@ -50,3 +50,22 @@ export const validChars = (text, regex = null) => {
         .join(' ')
         .trim();
 }
+
+export const randomString = (length = 15, prefix = '') => {
+    length = !isNaN(length -0) && length > 0 ? (length -0) : 10;
+
+    prefix = typeof prefix === 'string' ? prefix || '' : '';
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    const strOnly = (val) => `${val}`.toLowerCase()
+        .split('')
+        .filter(c => (new RegExp(/([a-z0-0])/ig)).test(c))
+        .join('');
+
+    return [strOnly(prefix), '_', strOnly(result)].join('');
+}

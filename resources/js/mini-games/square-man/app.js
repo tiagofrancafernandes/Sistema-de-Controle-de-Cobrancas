@@ -478,7 +478,6 @@ document.addEventListener('alpine:init', () => {
             let lKey = [code, key].includes('KeyL') || [code, key].includes('L') || keyCode === 76;
 
             if (lKey && ctrlKey && shiftKey) {
-                console.clear();
                 return;
             }
 

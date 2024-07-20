@@ -58,7 +58,11 @@ trait HasFilterContractMethods
     {
         $result = EvaluateClosure::evaluate($this->freeSearch ?? false, $this);
 
-        return is_bool($result) || is_a($result, FreeSearchInputFilterContract::class) ? $result : false;
+        if ($result === false) {
+            return false;
+        }
+
+        return is_a($result, FreeSearchInputFilterContract::class) ? $result : false;
     }
 
     public function submitOnChange(bool|Closure $submitOnChange = true): static
@@ -105,7 +109,6 @@ trait HasFilterContractMethods
 
         if (is_array($schema)) {
             $schema = array_map(function ($input) {
-                dump($input);
                 $input->gridSize($this->getGridSize());
 
                 return $input;
@@ -126,7 +129,7 @@ trait HasFilterContractMethods
     {
         $result = EvaluateClosure::evaluate($this->gridSize, $this);
 
-        return is_a($result, GridSizeEnum::class) ? $result : GridSizeEnum::TWELVE;
+        return is_a($result, GridSizeEnum::class) ? $result : GridSizeEnum::SIX;
     }
 
     public function submitFiltersButtonLabel(string|Closure $submitFiltersButtonLabel): static

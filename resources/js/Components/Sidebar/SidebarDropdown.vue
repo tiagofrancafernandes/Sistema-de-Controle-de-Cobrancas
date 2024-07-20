@@ -24,7 +24,7 @@ const handleItemClick = (index: number) => {
                 :href="childItem.href"
                 data-item-type="sidebar-link"
                 @click.prevent="handleItemClick(index)"
-                class="group relative flex items-center gap-2.5 rounded-md py-2 px-4 font-medium text-bodydark2 duration-300 ease-in-out"
+                class="group relative flex items-center gap-2.5 rounded-md py-2 px-4 font-light text-bodydark2 duration-300 ease-in-out"
                 :class="{
                     'bg-gray-800 dark:bg-gray-800 hover:bg-gray-600 dark:hover:bg-gray-600': true,
                     '!text-white': childItem.label === sidebarStore.selected,

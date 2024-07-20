@@ -66,3 +66,35 @@ Route::prefix('mini-game')->name('mini_game.')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+Route::get('/__open-in-editor', function (Illuminate\Http\Request $request) {
+    $filePath = $request->input('file');
+
+    //     //__open-in-editor
+    return <<<'BLADE'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open on Editor</title>
+</head>
+<body>
+<script>
+    (() => {
+        let searchParams = new URLSearchParams(window.location.search);
+        let file = searchParams.get('file');
+
+        if (!file || !file.trim()) {
+            // window.close();
+            return;
+        }
+
+        window.location.href = 'vscode://file/' + encodeURIComponent(file);
+        // window.close();
+    })();
+</script>
+</body>
+</html>
+BLADE;
+})->name('dev.open-in-editor');

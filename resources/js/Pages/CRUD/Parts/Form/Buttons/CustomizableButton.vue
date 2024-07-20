@@ -42,7 +42,7 @@ const btnType = computed(() => {
 const outlined = computed(() => {
     let defaultValue = true;
     let outline = valueToType(
-        evaluateOrValue(props?.outline ?? propsAndAttrs.value['outline'] ?? defaultValue),
+        evaluateOrValue(props?.outline ?? propsAndAttrs.value['outlined'] ?? propsAndAttrs.value['outline'] ?? defaultValue),
         'boolean'
     );
 
@@ -73,7 +73,7 @@ const color = computed(() => {
 })
 
 const colorClasses = computed(() => {
-    let presetColor = buttonPresetColors[color.value] ?? (presetColor[defaultColor] ?? {});
+    let presetColor = buttonPresetColors[color.value] ?? (buttonPresetColors[defaultColor] ?? {});
 
     let mode = outlined.value ? 'outlined' : 'noOutlined';
     presetColor = validClassMerge(

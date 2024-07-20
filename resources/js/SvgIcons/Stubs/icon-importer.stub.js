@@ -1,4 +1,8 @@
+// Static import
 // import OpenedEyeIcon from '@SvgIcons/Icons/OpenedEyeIcon.vue';
+
+// Dynamic import (Prefer this)
+const OpenedEyeIcon = () => import('@SvgIcons/Icons/OpenedEyeIcon.vue');
 
 const iconComponents = {
     // OpenedEyeIcon,

@@ -6,6 +6,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Arr;
 use App\Helpers\EvaluateClosure;
+use App\Core\Crud\Core\Concepts\Filter\Filter;
 
 /*
 table
@@ -28,6 +29,7 @@ class Table
     protected null|\Closure|array $theadConfig = null;
     protected null|\Closure|array $tbodyConfig = null;
     protected null|\Closure|array $tfootConfig = null;
+    protected null|Filter $filterConfig = null;
     protected null|array $theadRowClasses  = null;
     protected null|array $tbodyRowClasses  = null;
     protected null|array $tfootRowClasses  = null;
@@ -199,6 +201,18 @@ class Table
         return $this;
     }
 
+    public function filterConfig(?Filter $filterConfig): static
+    {
+        $this->filterConfig = $filterConfig;
+
+        return $this;
+    }
+
+    public function getFilterConfig(): ?Filter
+    {
+        return $this->filterConfig;
+    }
+
     public function getTheadConfig(array $toMerge = []): array
     {
         $toMerge['rowClasses'] ??= EvaluateClosure::toArray($this->theadRowClasses, $this);
@@ -287,6 +301,7 @@ class Table
                 'baseUrl' => $pagesInfo['baseUrl'] ?? null,
                 'links' => $links,
             ],
+            'filterConfig' => $table->getFilterConfig()?->asProps(),
         ];
 
         foreach ($table->getRecords() as $record) {
