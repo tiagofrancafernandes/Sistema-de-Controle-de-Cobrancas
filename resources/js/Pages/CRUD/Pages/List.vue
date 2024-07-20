@@ -13,6 +13,7 @@ import CustomTable from '@/Components/Tables/CustomTable.vue'
 import TailAdminLayout from '@/Layouts/TailAdminLayout.vue';
 // import OpenedEyeIcon from '@/Components/Icons/OpenedEyeIcon.vue';
 // import CrudTBodyTD from '@CRUD/Parts/Table/TBodyTD.vue';
+import ListPaginationLinks from '@CRUD/Parts/Layout/ListPaginationLinks.vue';
 
 import FilterBlock from '@/EasyCrud/Components/CRUD/Parts/Filter/FilterBlock.vue';
 
@@ -207,11 +208,14 @@ const makeDynamicPropCaller = (callable, ...params) => {
 //     ],
 // })
 
-// console.log('pageData', JSON.stringify(pageData.value));
 // console.log('pageConfig', JSON.stringify(pageConfig.value?.pageData));
 
 // let icon = 'SvgIconOpenedEye';
 let icon = 'heroicon-s-arrow-down-circle';
+
+const paginationConfig = computed(() => dataGet(pageData.value, 'pagination'));
+
+console.log('pageData', __toObject(pageData.value));
 
 const tableColumns = computed(() => dataGet(pageData.value, 'table.columns'));
 const records = computed(() => dataGet(pageData.value, 'records'));
@@ -402,18 +406,20 @@ const showFilterBlock = computed(() => {
         <div
             :class="[
                 {
-                    'rounded-none': showFilterBlock,
+                    'rounded-t-none': showFilterBlock,
                     'rounded-t-lg': !showFilterBlock,
                 } ,
+                'rounded-b-lg',
                 'border border-gray-200 bg-white shadow-default dark:border-gray-700 dark:bg-gray-800'
             ]"
         >
             <div
                 :class="[
                     {
-                        'rounded-none': showFilterBlock,
+                        'rounded-t-none': showFilterBlock,
                         'rounded-t-lg': !showFilterBlock,
                     } ,
+                    'rounded-b-lg',
                     'relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10',
                 ]"
             >
@@ -512,42 +518,11 @@ const showFilterBlock = computed(() => {
                                 colspan="100%"
                                 aaclass="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11 text-right"
                             >
-                                <div class="flex flex-col space-y-4 items-end justify-end py-3 pr-3">
-                                    <nav>
-                                        <ul class="flex items-center -space-x-px h-10 text-base">
-                                            <li>
-                                                <a href="#" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                                    <span class="sr-only">Previous</span>
-                                                    <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"></path>
-                                                    </svg>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" aria-current="page" class="z-10 flex items-center justify-center px-4 h-10 leading-tight text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                                    <span class="sr-only">Next</span>
-                                                    <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"></path>
-                                                    </svg>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <div class="py-3 pr-3">
+                                    <ListPaginationLinks
+                                        :paginationConfig="paginationConfig"
+                                        :hide="!true"
+                                    />
                                 </div>
                             </td>
                         </tr>

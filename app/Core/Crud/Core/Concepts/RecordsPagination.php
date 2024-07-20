@@ -383,6 +383,6 @@ class RecordsPagination
         $links['prev_page_url'] = ($currentPage - 1) <= 0 ? null : $links['previous']['url'] ?? null;
         $links['next_page_url'] = ($currentPage + 1) >= $pageCount ? null : $links['next']['url'] ?? null;
 
-        return $links;
+        return array_values($links);
     }
 }
