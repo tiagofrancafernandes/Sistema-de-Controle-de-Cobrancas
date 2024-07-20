@@ -316,7 +316,7 @@ class RecordsPagination
         $perPage = EvaluateClosure::toIntOrNull($request->input('per_page') || $request->input('perPage'));
         $requestQuery = (array) ($request->query() ?: []);
 
-        $requestFilter = (array) ($request->input('filter') ?: []);
+        $requestFilter = (array) ($request->input('filter') || $request->input('filters') ?? []);
         // $requestFilter = \App\Helpers\RequestHelpers\QueryFilter::getFilters($request);
 
         foreach ($pageNumbers as $pageNumber) {
@@ -331,49 +331,42 @@ class RecordsPagination
                 )
             );
             $query = urldecode(http_build_query($linkProps));
+            $active = $pagesInfo?->currentPage === $pageNumber;
             $links[$pageNumber] = [
+                'page' => $pageNumber,
                 'label' => $pageNumber,
                 'query' => $query,
                 'url' => implode('?', array_filter([$baseUrl, $query])),
-                'active' => $pagesInfo?->currentPage === $pageNumber,
+                'active' => $active,
+                'disabled' => $active || !filled($pageNumber),
             ];
         }
 
-        $previousQuery = urldecode(
+        $navQueryMaker = fn (mixed $pageNumber = null) => urldecode(
             http_build_query(
                 $genLinkProps(
                     array_merge(
                         $requestQuery,
                         [
-                            // 'page' => $pageNumber,
+                            'page' => $pageNumber,
                             'per_page' => $perPage,
-                            'filter' => $requestFilter,
+                            // 'filter' => $requestFilter,
                         ],
                     )
                 )
             )
         );
 
-        $nextQuery = urldecode(
-            http_build_query(
-                $genLinkProps(
-                    array_merge(
-                        $requestQuery,
-                        [
-                            // 'page' => $pageNumber,
-                            'per_page' => $perPage,
-                            'filter' => $requestFilter,
-                        ],
-                    )
-                )
-            )
-        );
+        $links['previous']['page'] = ($currentPage - 1) <= 0 ? null : ($currentPage - 1);
+        $links['next']['page'] = ($currentPage + 1) >= $pageCount ? null : ($currentPage + 1);
 
-        $links['previous']['query'] = $previousQuery;
+        $links['previous']['query'] = $previousQuery = $navQueryMaker($links['previous']['page']);
         $links['previous']['url'] = implode('?', array_filter([$baseUrl, $previousQuery]));
+        $links['previous']['disabled'] = !filled($links['previous']['page'] ?? null);
 
-        $links['next']['query'] = $nextQuery;
+        $links['next']['query'] = $nextQuery = $navQueryMaker($links['next']['page']);
         $links['next']['url'] = implode('?', array_filter([$baseUrl, $nextQuery]));
+        $links['next']['disabled'] = !filled($links['next']['page'] ?? null);
 
         $nextVal = $links['next'] ?? null;
         unset($links['next']);
